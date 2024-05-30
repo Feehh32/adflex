@@ -79,7 +79,7 @@ $ npm run build
 
 <br></br>
 
-Você pode baixar a aplicação [aqui]([https://drive.google.com/file/d/1NNEqQ859xt_55BkLGNXLd2LPC5YC7vAT/view?usp=drive_link](https://drive.google.com/file/d/1IkrEUsbxb7yNo2B77LgdreW31w1DOo0-/view?usp=sharing)).
+Você pode baixar a aplicação [aqui]([https://drive.google.com/file/d/1IkrEUsbxb7yNo2B77LgdreW31w1DOo0-/view?usp=sharing]).
 
 <br></br>
 
