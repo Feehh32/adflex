@@ -3,10 +3,10 @@
 
 ![Status](https://img.shields.io/badge/status-complete-green)
 ![Electron](https://img.shields.io/badge/Electron-27.1.0-informational)
-![Repo size](https://img.shields.io/github/repo-size/Feehh32/ad-flex)
-![License](https://img.shields.io/github/license/Feehh32/ad-flex)
+![Repo size](https://img.shields.io/github/repo-size/Feehh32/adflex)
+![License](https://img.shields.io/github/license/Feehh32/adflex)
 ![GitHub followers](https://img.shields.io/github/followers/Feehh32)
-![last commit](https://img.shields.io/github/last-commit/Feehh32/ad-flex)
+![last commit](https://img.shields.io/github/last-commit/Feehh32/adflex)
 
 <br></br>
 
@@ -55,7 +55,7 @@ As seguintes ferramentas foram usadas na construção do projeto:
 
 # Clone do repositório
 
-$ git clone https://github.com/Feehh32/ad-flex.git
+$ git clone https://github.com/Feehh32/adflex.git
 
 # na pasta raiz do projeto no seu terminal (ou no terminal integrado do seu vs code) instale as dependencias do projeto
 
