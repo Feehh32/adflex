@@ -1,0 +1,203 @@
+.grid {
+  display: grid;
+  grid-template-columns: minmax(auto, 270px) 1fr;
+  gap: 80px;
+  margin-right: 80px;
+}
+
+/* padding do menu principal */
+
+.main-menu-padding {
+  padding: 40px 20px;
+}
+
+/* estilo padrão para inputs de formulário */
+
+.input-pattern {
+  width: 100%;
+  background-color: var(--color-1);
+  padding: 12px 32px;
+  border-radius: 4px;
+  border: 2px solid var(--color-4);
+  outline-color: var(--color-6);
+  font-family: "Roboto", sans-serif;
+  font-size: 1rem;
+}
+
+/* estilos padrão para inputs de busca */
+
+.input-search-label {
+  display: flex;
+  gap: 0;
+  position: relative;
+}
+
+.input-search {
+  border-top: 3px solid var(--color-7);
+  border-left: 3px solid var(--color-7);
+  border-bottom: 3px solid var(--color-7);
+  border-radius: 4px 0 0 4px;
+  height: 40px;
+  max-width: 100%;
+  outline-color: var(--color-prim1);
+  background-color: transparent;
+  padding: 20px;
+  color: var(--color-0);
+  outline: none;
+}
+
+.input-search::placeholder {
+  color: var(--color-7);
+}
+
+.input-search-btn {
+  padding: 5px 16px;
+  margin-left: -5px;
+  border-radius: 0 4px 4px 0;
+  border-top: 3px solid var(--color-7);
+  border-right: 3px solid var(--color-7);
+  border-left: none;
+  border-bottom: 3px solid var(--color-7);
+  background-color: var(--color-7);
+  transition: 0.3s;
+  cursor: pointer;
+  justify-self: start;
+}
+
+.input-search-btn:hover {
+  background-color: var(--color-6);
+  border-color: var(--color-6);
+}
+
+.input-search-suggestions {
+  display: grid;
+  gap: 10px;
+  background-color: var(--color-11);
+  border-radius: 4px;
+  padding: 8px;
+  width: 80%;
+  overflow-x: hidden;
+  z-index: 999;
+  position: absolute;
+  top: 110%;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
+  transition: 0.1s;
+}
+
+.input-search-suggestions a:focus {
+  background-color: var(--color-10);
+  width: 100%;
+  border-radius: 4px;
+}
+
+/* menu hamburguer */
+
+.burguer-menu {
+  width: 25px;
+  height: 18px;
+  position: relative;
+  border-top: 3px solid var(--color-0);
+  border-bottom: 3px solid var(--color-0);
+  border-left: none;
+  border-right: none;
+  background-color: transparent;
+  display: none;
+}
+
+.burguer-menu::after {
+  content: "";
+  display: block;
+  width: 25px;
+  height: 2.8px;
+  background-color: var(--color-0);
+  position: absolute;
+  bottom: 41%;
+}
+
+.position__os {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--color-11);
+  display: flex;
+  align-items: center;
+}
+
+/* estilos padrão para botões de formulário */
+
+.btn {
+  background: var(--linear);
+  padding: 10px 20px;
+  text-transform: uppercase;
+  margin-top: 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  max-width: 164px;
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  color: var(--color-prim5);
+}
+
+.btn:hover {
+  background: linear-gradient(180deg, #ffae48, #ffaf4b);
+}
+
+/* estilos padrões para títulos h1 */
+
+.main__title {
+  font: 600 3rem/1.125 "IBM Plex Mono", monospace;
+  color: var(--color-0);
+}
+
+/* estilo para msg de requisições */
+.sucessMsg {
+  width: 700px;
+  grid-column: 1/-1;
+  margin-top: 10px;
+  text-align: center;
+  padding: 8px;
+  background-color: #baeebf;
+  border-radius: 4px;
+  border: 3px solid var(--main-green-p);
+  display: none;
+}
+
+.sucessMsg p {
+  color: var(--main-green-p);
+}
+
+.failedMsg {
+  width: 700px;
+  grid-column: 1/-1;
+  margin-top: 10px;
+  text-align: center;
+  padding: 8px;
+  background-color: #e89696;
+  border-radius: 4px;
+  border: 3px solid var(--delete-red);
+  display: none;
+}
+
+.failedMsg p {
+  color: var(--delete-red);
+}
+
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: 100%;
+    align-items: center;
+    position: relative;
+    margin-right: 0;
+  }
+  .main__title {
+    font-size: 2rem;
+  }
+
+  .burguer-menu {
+    display: block;
+  }
+
+  .input-search-suggestions a {
+    padding: 10px;
+  }
+}

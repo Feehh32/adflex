@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:3000">
+    <title>AD flex | Inserir novo Cliente </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Poppins:wght@500;600&family=Roboto:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.min.css">
+
+    <script>
+        document.documentElement.classList.add('js')
+    </script>
+</head>
+
+<body>
+    <div class="grid">
+        <header class="header fadeInLeft" data-anime="100" data-menu="list">
+            <span class="header__logo-wrapper main-menu-padding">
+                <button type="button" class="burguer-menu" aria-expanded="false" aria-controls="main-menu"
+                    data-btn-menu></button>
+                <a href="./index.html" class="header__logo">
+                    <img src=" ../img/logo-colorida.svg" width="128" height="33" alt="Ad Flex">
+                </a>
+            </span>
+            <nav aria-label="primaria">
+                <ul class="header__menu font-p-m color-0 main-menu-padding">
+                    <li>
+                        <img src="../img/icones/inicio.svg" width="24" height="24" alt="icone de início">
+                        <a href=index.html>Início</a>
+                    </li>
+                    <li>
+                        <img src="../img/icones/os-icon.svg" width="24" height="24" alt="icone de uma ordem de serviço">
+                        <a href="./form_os.html">Gerar Nova O.S</a>
+                    </li>
+                </ul>
+                <ul class="header__menu-secondary main-menu-padding font-p-m">
+                    <li>
+                        <a href="./form_client.html" class="font-p-xs">
+                            <img src="../img/icones/plus-icon.svg" width="20" height="20"
+                                alt="icone de um sinal de soma">
+                            adicionar novo cliente
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./month_sales.html" class="font-p-xs">
+                            <img src="../img/icones/fechamento-icon.svg" width="20" height="20"
+                                alt="icone com um nota de fechamento">
+                            Fazer fechamento do mês
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <span class="main__credits-container main-menu-padding font-r-xs">
+                <p>Desenvolvido por Fernando Pereira - Alguns direitos reservados. - 2024</p>
+            </span>
+        </header>
+        <main class="main__form-client">
+            <span class="header__logo-wrapper main-menu-padding logo-outside-menu">
+                <button type="button" class="burguer-menu" aria-expanded="false" aria-controls="main-menu"
+                    data-btn-menu></button>
+                <a href="./index.html" class="header__logo">
+                    <img src=" ../img/logo-colorida.svg" width="128" height="33" alt="Ad Flex">
+                </a>
+            </span>
+            <h1 class="main__title formClient-title fadeInLeft" data-titleForm data-anime="200">Insira aqui um novo
+                Cliente<span class="color-prim2">.</span></h1>
+            <span class="font-p-s-b fadeInLeft hidden" data-msg></span>
+            <form class="client-add fadeInUp" action="" data-anime="400" data-form>
+                <fieldset>
+                    <label class="font-p-s-b" for="nameClient">Nome do Cliente</label>
+                    <input class="input-pattern" type="text" id="nameClient" name="name"
+                        placeholder="Digite aqui o nome do cliente" required data-field>
+                    <span class="msgError"></span>
+                </fieldset>
+                <fieldset>
+                    <label class="font-p-s-b" for="email1">Email 1</label>
+                    <input class="input-pattern" type="email" id="email1" name="email1" placeholder="client@email.com"
+                        data-field required>
+                    <span class="msgError"></span>
+                </fieldset>
+                <fieldset>
+                    <label class="font-p-s-b" for="email2">Email 2</label>
+                    <input class="input-pattern" type="email" id="email2" name="email2" placeholder="client@email.com"
+                        data-field>
+                    <span class="msgError"></span>
+                </fieldset>
+                <fieldset>
+                    <label class="font-p-s-b" for="tel1">Telefone 1</label>
+                    <input class="input-pattern" type="tel" id="tel1" name="tel1" placeholder="(99) 99999-9999" required
+                        pattern="^\(\d{2}\) \d{4,5}-\d{4}$"
+                        title="Digite um número de telefone válido no formato (XX) XXXX-XXXX ou (XX) XXXXX-XXXX"
+                        data-field>
+                    <span class=" msgError"></span>
+                </fieldset>
+                <fieldset>
+                    <label class="font-p-s-b" for="tel2">Telefone 2</label>
+                    <input class="input-pattern" type="tel" id="tel2" name="tel2" placeholder="(99) 99999-9999"
+                        pattern="^\(\d{2}\) \d{4,5}-\d{4}$"
+                        title="Digite um número de telefone válido no formato (XX) XXXX-XXXX ou (XX) XXXXX-XXXX"
+                        data-field>
+                    <span class="msgError"></span>
+                </fieldset>
+                <fieldset>
+                    <label class="font-p-s-b" for="charge">Cálculo de cobrança</label>
+                    <input class="input-pattern" type="number" step="0.01" id="charge" name="charge" required
+                        data-field>
+                    <span class="msgError"></span>
+                </fieldset>
+                <button type="submit" class="btn font-r-l-b" data-btnForm>Adicionar</button>
+            </form>
+        </main>
+    </div>
+    <script src="../js/plugin/simple-anime.js"></script>
+    <script src="../main.js"></script>
+</body>
+
+</html>

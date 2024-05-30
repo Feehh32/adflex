@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:3000">
+    <title>AD flex | Fechamento </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Poppins:wght@500;600&family=Roboto:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.min.css">
+
+    <script>
+        document.documentElement.classList.add('js')
+    </script>
+</head>
+
+<body>
+    <div class="grid">
+        <header class="header fadeInLeft" data-anime="100" data-menu="list">
+            <span class="header__logo-wrapper main-menu-padding">
+                <button type="button" class="burguer-menu" aria-expanded="false" aria-controls="main-menu"
+                    data-btn-menu></button>
+                <a href="./index.html" class="header__logo">
+                    <img src=" ../img/logo-colorida.svg" width="128" height="33" alt="Ad Flex">
+                </a>
+            </span>
+            <nav aria-label="primaria">
+                <ul class="header__menu font-p-m color-0 main-menu-padding">
+                    <li>
+                        <img src="../img/icones/inicio.svg" width="24" height="24" alt="icone de início">
+                        <a href=index.html>Início</a>
+                    </li>
+                    <li>
+                        <img src="../img/icones/os-icon.svg" width="24" height="24" alt="icone de uma ordem de serviço">
+                        <a href="./form_os.html">Gerar Nova O.S</a>
+                    </li>
+                </ul>
+                <ul class="header__menu-secondary main-menu-padding font-p-m">
+                    <li>
+                        <a href="./form_client.html" class="font-p-xs">
+                            <img src="../img/icones/plus-icon.svg" width="20" height="20"
+                                alt="icone de um sinal de soma">
+                            adicionar novo cliente
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./month_sales.html" class="font-p-xs">
+                            <img src="../img/icones/fechamento-icon.svg" width="20" height="20"
+                                alt="icone com um nota de fechamento">
+                            Fazer fechamento do mês
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <span class="main__credits-container main-menu-padding font-r-xs">
+                <p>Desenvolvido por Fernando Pereira - Alguns direitos reservados. - 2024</p>
+            </span>
+        </header>
+        <main class="main__sales">
+            <span class="header__logo-wrapper main-menu-padding logo-outside-menu">
+                <button type="button" class="burguer-menu" aria-expanded="false" aria-controls="main-menu"
+                    data-btn-menu></button>
+                <a href="./index.html" class="header__logo">
+                    <img src=" ../img/logo-colorida.svg" width="128" height="33" alt="Ad Flex">
+                </a>
+            </span>
+            <h1 class="font-p-xl-b color-0 main__title fadeInDown" data-anime="300">
+                Vendas mensais<span class="color-prim2">.</span>
+            </h1>
+            <form class="form__sales fadeInUp" action="" data-anime="600" data-form-sales>
+                <fieldset>
+                    <label class="font-p-s-b color-0" for="clientSale">Selecione o Cliente</label>
+                    <select class="input-pattern" name="clientSale" id="clientSale" data-sale required>
+                        <option value=""></option>
+                    </select>
+                    <span class="msgError"></span>
+                </fieldset>
+                <fieldset>
+                    <label class="font-p-s-b color-0" for="monthSale">Selecione o Mês</label>
+                    <select class="input-pattern" name="monthSale" id="monthSale" data-sale required>
+                        <option value="Janeiro">Janeiro</option>
+                        <option value="Fevereiro">Fevereiro</option>
+                        <option value="Março">Março</option>
+                        <option value="Abril">Abril</option>
+                        <option value="Maio">Maio</option>
+                        <option value="Junho">Junho</option>
+                        <option value="Julho">Julho</option>
+                        <option value="Agosto">Agosto</option>
+                        <option value="Setembro">Setembro</option>
+                        <option value="Outubro">Outubro</option>
+                        <option value="Novembro">Novembro</option>
+                        <option value="Dezembro">Dezembro</option>
+                    </select>
+                    <span class="msgError"></span>
+                </fieldset>
+                <fieldset>
+                    <label class="font-p-s-b color-0" for="yearSale">Digite o ano</label>
+                    <input class="input-pattern" type="number" id="yearSale" name="yearSale" placeholder="Digite o ano"
+                        required data-sale>
+                    <span class="msgError"></span>
+                </fieldset>
+                <button type="submit" class="adicionar font-r-l-b color-12" data-calculate="form">Calcular</button>
+            </form>
+            <section class="sales__rst-wrapper fadeInUp" data-anime="800" data-sales-wrapper>
+                <h2 class="color-0 font-os-xl-b" data-sale-title></h2>
+                <button type="button" class="btn" id="btn-print" data-sale-btn>Imprimir</button>
+            </section>
+        </main>
+    </div>
+    <script src="../js/plugin/simple-anime.js"></script>
+    <script src="../main.js" type="module"></script>
+</body>
+
+</html>

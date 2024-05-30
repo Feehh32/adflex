@@ -1,0 +1,9 @@
+/node_modules
+server/node_modules
+database.db
+.vscode/launch.json
+main.js.map
+main.js.LICENSE.txt
+build
+documento-dados-nota-fiscal.pdf.env
+.env

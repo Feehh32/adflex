@@ -1,0 +1,210 @@
+/* estilos da seção de notas de serviço */
+.client-grid {
+  display: grid;
+  grid-template-columns: 650px auto;
+  padding: 60px 0;
+  grid-auto-rows: max-content;
+}
+
+.client__name {
+  grid-column: 1/-1;
+  margin-bottom: 10px;
+  grid-row: 1;
+}
+
+.client-grid hr {
+  width: 100%;
+  height: 1px;
+  grid-column: 1/2;
+  grid-row: 2;
+  margin-bottom: 20px;
+  border: none;
+  background-color: var(--color-9);
+}
+
+.client__os-container {
+  border-radius: 4px;
+  grid-row: 3;
+  height: fit-content;
+}
+
+.client__os-header {
+  border-radius: 4px 4px 0 0;
+  background-color: var(--color-10);
+  width: 100%;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid var(--color-9);
+}
+
+/* estilos exclusivos do campo de busca */
+.client__os-label input {
+  border-radius: 4px;
+  width: 100%;
+  position: relative;
+  padding-left: 40px;
+}
+
+.client__os-label svg {
+  position: absolute;
+  top: 23%;
+  left: 5%;
+}
+
+.client__os-label {
+  display: flex;
+}
+
+/* ===========//============ */
+
+.client__os-search {
+  border-top: 3px solid var(--color-7);
+  border-left: 3px solid var(--color-7);
+  border-bottom: 3px solid var(--color-7);
+  border-radius: 4px 0 0 4px;
+  height: 40px;
+  max-width: 100%;
+  outline-color: var(--color-prim1);
+  background-color: transparent;
+  padding: 20px;
+  color: var(--color-0);
+  outline: none;
+}
+
+.client__os-search::placeholder {
+  color: var(--color-7);
+}
+
+.client__os-search-btn {
+  padding: 5px 16px;
+  margin-left: -5px;
+  border-radius: 0 4px 4px 0;
+  border-top: 3px solid var(--color-7);
+  border-right: 3px solid var(--color-7);
+  border-bottom: 3px solid var(--color-7);
+  background-color: var(--color-7);
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.client__os-search-btn:hover {
+  background-color: var(--color-6);
+}
+
+.client__os-list {
+  border: 1px solid var(--color-9);
+}
+
+.client__os-btn-controller {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+}
+
+.js .client__os-controller {
+  cursor: pointer;
+  color: var(--color-5);
+  background-color: transparent;
+  border: none;
+  font: 400 0.875rem/1.5 "IBM Plex Mono", monospace;
+  display: none;
+}
+
+.js .client__os-controller.active {
+  display: block;
+}
+
+.client__os-list li a {
+  background-color: var(--color-11);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--color-9);
+}
+
+.client__os-list li a span {
+  display: flex;
+  gap: 8px;
+}
+
+.client__os-btn-controller {
+  display: flex;
+  justify-content: space-between;
+  grid-column: 1;
+}
+
+/* estilos da seção de dados e ações relacionados ao cliente */
+
+.client__info-container {
+  grid-row: 3;
+  margin-left: 40px;
+}
+
+.client__info-details {
+  padding: 10px 0 10px 0;
+  border-bottom: 1px solid var(--color-9);
+}
+
+.client__info-details li {
+  padding: 5px 0;
+}
+
+.client__info-details li a,
+.client__info-details li span {
+  padding-left: 10px;
+}
+
+.client__info-container h4 {
+  margin: 10px 0 10px 0;
+}
+
+.client__info-actions li {
+  display: flex;
+  gap: 10px;
+  padding: 5px 0;
+}
+
+.client__info-actions li button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+@media (max-width: 860px) {
+  .client-grid {
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .client__name {
+    margin-top: 32px;
+  }
+
+  .client__info-container {
+    grid-row: 3;
+    margin-left: 0;
+    margin-top: 20px;
+  }
+
+  .client__os-header h2 {
+    font-size: 1rem;
+  }
+
+  @media (max-width: 600px) {
+    .client__os-header {
+      display: block;
+    }
+
+    .client__os-header h2 {
+      margin-bottom: 16px;
+    }
+
+    .client__name {
+      font-size: 1.5rem;
+    }
+  }
+}

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:3000">
+    <title>AD flex | Inserir nova O.S </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Poppins:wght@500;600&family=Roboto:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.min.css">
+
+    <script>
+        document.documentElement.classList.add('js')
+    </script>
+</head>
+
+<body>
+    <div class="grid">
+        <header class="header fadeInLeft" data-anime="100" data-menu="list">
+            <span class="header__logo-wrapper main-menu-padding">
+                <button type="button" class="burguer-menu" aria-expanded="false" aria-controls="main-menu"
+                    data-btn-menu></button>
+                <a href="./index.html" class="header__logo">
+                    <img src="../img/logo-colorida.svg" width="128" height="33" alt="Ad Flex">
+                </a>
+            </span>
+            <nav aria-label="primaria">
+                <ul class="header__menu font-p-m color-0 main-menu-padding">
+                    <li>
+                        <img src="../img/icones/inicio.svg" width="24" height="24" alt="icone de início">
+                        <a href=index.html>Início</a>
+                    </li>
+                    <li>
+                        <img src="../img/icones/os-icon.svg" width="24" height="24" alt="icone de uma ordem de serviço">
+                        <a href="./form_os.html">Gerar Nova O.S</a>
+                    </li>
+                </ul>
+                <ul class="header__menu-secondary main-menu-padding font-p-m">
+                    <li>
+                        <a href="./form_client.html" class="font-p-xs">
+                            <img src="../img/icones/plus-icon.svg" width="20" height="20"
+                                alt="icone de um sinal de soma">
+                            adicionar novo cliente
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./month_sales.html" class="font-p-xs">
+                            <img src="../img/icones/fechamento-icon.svg" width="20" height="20"
+                                alt="icone com um nota de fechamento">
+                            Fazer fechamento do mês
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <span class="main__credits-container main-menu-padding font-r-xs">
+                <p>Desenvolvido por Fernando Pereira - Alguns direitos reservados. - 2024</p>
+            </span>
+        </header>
+        <main class="main__form-os">
+            <span class="header__logo-wrapper main-menu-padding logo-outside-menu">
+                <button type="button" class="burguer-menu" aria-expanded="false" aria-controls="main-menu"
+                    data-btn-menu></button>
+                <a href="./index.html" class="header__logo">
+                    <img src=" ../img/logo-colorida.svg" width="128" height="33" alt="Ad Flex">
+                </a>
+            </span>
+            <h1 class="form-titulo main__title fadeInLeft" data-anime="200">Insira aqui sua nova O.S<span
+                    class="color-prim2">.</span></h1>
+
+            <span class="font-p-s-b fadeInLeft hidden" data-msg>
+
+            </span>
+            <form class="os-add fadeInUp" data-anime="400" data-formOs method="post">
+                <div class="os-add__client">
+                    <fieldset>
+                        <label class="font-p-s-b" for="client">Selecione o Cliente</label>
+                        <select class="input-pattern" name="client" id="client" data-select required>
+                            <option value=""></option>
+                        </select>
+                        <span class="msgError"></span>
+                    </fieldset>
+                    <div class="service__thickness">
+                        <h3 class="font-p-s-b">Escolher espessura</h3>
+                        <fieldset>
+                            <input type="radio" name="thickness" value="1.14" id="1.14">
+                            <label for="1.14" class="font-r-m-b">1.14</label>
+                        </fieldset>
+                        <fieldset>
+                            <input type="radio" name="thickness" value="1.70" id="1.70">
+                            <label for="1.70" class="font-r-m-b">1.70</label>
+                        </fieldset>
+                        <fieldset>
+                            <input type="radio" name="thickness" value="2.84" id="2.84">
+                            <label for="2.84" class="font-r-m-b">2.84</label>
+                        </fieldset>
+                        <fieldset>
+                            <input type="radio" name="thickness" value="3.94" id="3.94">
+                            <label for="3.94" class="font-r-m-b">3.94</label>
+                        </fieldset>
+                        <fieldset>
+                            <input type="radio" name="thickness" value="4.94" id="4.94">
+                            <label for="4.94" class="font-r-m-b">4.94</label>
+                        </fieldset>
+                        <fieldset>
+                            <input type="radio" name="thickness" value="6.35" id="6.35">
+                            <label for="6.35" class="font-r-m-b">6.35</label>
+                        </fieldset>
+                    </div>
+                    <div class="btn__addServiceWrapper">
+                        <button class="adicionar font-r-l-b color-12" data-btnServiceAmount type="button">adicionar
+                            formulario de O.S
+                        </button>
+                    </div>
+                </div>
+                <div data-service class="service__wrapper">
+                    <div class="service">
+                        <fieldset>
+                            <label class="font-p-s-b" for="serviceName0">Nome do serviço</label>
+                            <input class="input-pattern" type="text" name="serviceName" id="serviceName0"
+                                data-serviceItem required>
+                            <span class="msgError"></span>
+                        </fieldset>
+                        <fieldset>
+                            <label class="font-p-s-b" for="serviceAmount0">Quantidade de peças</label>
+                            <input class="input-pattern" type="number" name="serviceAmount" id="serviceAmount0"
+                                data-serviceItem required>
+                            <span class="msgError"></span>
+                        </fieldset>
+                        <div class="service__measure">
+                            <legend class="font-p-s-b">Medidas</legend>
+                            <fieldset id="measures" class="measure__container">
+                                <div>
+                                    <input class="input-pattern inputHeight" type="number" step="0.01" id="height0"
+                                        name="height" data-serviceItem placeholder="Altura" required>
+                                    <span class="msgError"></span>
+                                </div>
+                                <div>
+                                    <input class="input-pattern inputWidth" type="number" step="0.01" id="width0"
+                                        name="width" data-serviceItem placeholder="Largura" required>
+                                    <span class="msgError"></span>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <fieldset class="hideMeasures__Wrapper">
+                            <input type="checkbox" name="hideMeasure" value="nao" id="hiddenMeasures" data-serviceItem>
+                            <label for="hiddenMeasures" class="font-r-m-b">Mostrar medidas na os</label>
+                            <span class="msgError"></span>
+                        </fieldset>
+                    </div>
+                </div>
+                <button type="submit" class="btn font-r-l-b color-prim5">Inserir O.S</button>
+            </form>
+        </main>
+    </div>
+    <script src="../js/plugin/simple-anime.js"></script>
+    <script src="../main.js" type="module"></script>
+</body>
+
+</html>

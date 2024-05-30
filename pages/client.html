@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:3000">
+    <title>AD flex | Clientes </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Poppins:wght@500;600&family=Roboto:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.min.css">
+
+
+    <script>
+        document.documentElement.classList.add('js')
+    </script>
+</head>
+
+<body>
+    <div class="grid">
+        <header class="header fadeInLeft" data-anime="100" data-menu="list">
+            <span class="header__logo-wrapper main-menu-padding">
+                <button type="button" class="burguer-menu" aria-expanded="false" aria-controls="main-menu"
+                    data-btn-menu></button>
+                <a href="./index.html" class="header__logo">
+                    <img src=" ../img/logo-colorida.svg" width="128" height="33" alt="Ad Flex">
+                </a>
+            </span>
+            <nav aria-label="primaria">
+                <ul class="header__menu font-p-m color-0 main-menu-padding">
+                    <li>
+                        <img src="../img/icones/inicio.svg" width="24" height="24" alt="icone de início">
+                        <a href=index.html>Início</a>
+                    </li>
+                    <li>
+                        <img src="../img/icones/os-icon.svg" width="24" height="24" alt="icone de uma ordem de serviço">
+                        <a href="./form_os.html">Gerar Nova O.S</a>
+                    </li>
+                </ul>
+                <ul class="header__menu-secondary main-menu-padding font-p-m">
+                    <li>
+                        <a href="./form_client.html" class="font-p-xs">
+                            <img src="../img/icones/plus-icon.svg" width="20" height="20"
+                                alt="icone de um sinal de soma">
+                            adicionar novo cliente
+                        </a>
+                    </li>
+                    <li>
+                        <a href="./month_sales.html" class="font-p-xs">
+                            <img src="../img/icones/fechamento-icon.svg" width="20" height="20"
+                                alt="icone com um nota de fechamento">
+                            Fazer fechamento do mês
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <span class="main__credits-container main-menu-padding font-r-xs">
+                <p>Desenvolvido por Fernando Pereira - Alguns direitos reservados. - 2024</p>
+            </span>
+        </header>
+        <div class="client-grid" data-grid="client">
+            <span class="header__logo-wrapper main-menu-padding logo-outside-menu">
+                <button type="button" class="burguer-menu" aria-expanded="false" aria-controls="main-menu"
+                    data-btn-menu></button>
+                <a href="./index.html" class="header__logo">
+                    <img src=" ../img/logo-colorida.svg" width="128" height="33" alt="Ad Flex">
+                </a>
+            </span>
+            <h1 class="client__name color-0 font-os-xl-b fadeInDown" data-name="client" data-anime="300"></h1>
+            <hr class="fadeInDown" data-anime="300">
+            <main class="client__os-container fadeInRight" data-anime="300" data-clientOsContainer>
+                <div class="client__os-header">
+                    <h2 class="color-0 font-os-l-b">Ordem de serviço</h2>
+                    <label for="osSearch" class="input-search-label client__os-label">
+                        <input type="search" class="input-search" id="osSearch" name="osSearch"
+                            title="Pesquise pelo nome do serviço na os, pela data ou pelo código da os" data-osSearch
+                            placeholder="Buscar os">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <g clip-path="url(#clip0_269_124)">
+                                <path
+                                    d="M20.875 19.4602L16.875 15.4554C16.7454 15.3226 16.6012 15.2051 16.445 15.105L15.445 14.4142C17.5019 11.866 17.521 8.23099 15.491 5.66125C13.461 3.09151 9.92359 2.27284 6.9731 3.68991C4.0226 5.10699 2.44643 8.38161 3.17773 11.5751C3.90902 14.7686 6.75261 17.0287 10.025 17.0173C11.613 17.0178 13.1541 16.4776 14.395 15.4855L15.145 16.4867C15.234 16.6156 15.3344 16.7362 15.445 16.8471L19.445 20.8519C19.5389 20.9467 19.6667 21 19.8 21C19.9333 21 20.0611 20.9467 20.155 20.8519L20.855 20.1511C21.0448 19.9631 21.0536 19.6589 20.875 19.4602ZM10.025 15.0149C7.26357 15.0149 5.025 12.7736 5.025 10.0089C5.025 7.24411 7.26357 5.00284 10.025 5.00284C12.7864 5.00284 15.025 7.24411 15.025 10.0089C15.025 11.3365 14.4982 12.6099 13.5605 13.5487C12.6228 14.4875 11.3511 15.0149 10.025 15.0149Z"
+                                    fill="#38393E" />
+                            </g>
+                            <defs>
+                                <clipPath id="clip0_269_124">
+                                    <rect width="24" height="24" fill="white" />
+                                </clipPath>
+                            </defs>
+                        </svg>
+                    </label>
+                </div>
+                <div>
+                    <ul class="client__os-list font-r-m color-0" data-os="wrapper">
+                    </ul>
+                    <div class="client__os-btn-controller">
+                        <button type="button" data-os="ver-mais" class="client__os-controller">ver mais</button>
+                        <button type="button" data-os="ver-menos" class="client__os-controller">ver menos</button>
+                    </div>
+                </div>
+            </main>
+            <section class="client__info-container fadeInLeft" data-anime="400" data-mainClient>
+                <h3 class="color-0 font-os-l">Informações do cliente</h3>
+                <ul class="client__info-details" data-info="client"></ul>
+                <h4 class="color-0 font-os-l">Ações</h4>
+                <ul class="client__info-actions">
+                    <li>
+                        <img src="../img/icones/os-icon.svg" width="20" height="20" alt="Icone de uma nota de serviço">
+                        <a href="" class="font-p-s-b color-0" data-action="nova-os">
+                            Inserir nova os
+                        </a>
+                    </li>
+                    <li>
+                        <img src="../img/icones/edit.svg" width="24" height="24" alt="Icone de ediçao">
+                        <a href="" class="font-p-s-b color-0" data-action="edit-client">Editar Informações do
+                            cliente</a>
+                    </li>
+                    <li>
+                        <img src="../img/icones/email-icon.svg" width="24" height="24" alt="Icone de email">
+                        <button class="font-p-s-b color-0 mailBtn" data-action="send-mail">
+                            Enviar cadastro de nota fiscal
+                        </button>
+                    </li>
+                    <li>
+                        <img src="../img/icones/delete.svg" width="24" height="24" alt="Icone de exclusão">
+                        <button class="font-p-s-b delete-red" data-action="delete-client">
+                            Excluir cliente
+                        </button>
+                    </li>
+                </ul>
+            </section>
+        </div>
+    </div>
+    </div>
+
+    <script src="../js/plugin/simple-anime.js"></script>
+    <script src="../main.js" type="module"></script>
+</body>
+
+</html>

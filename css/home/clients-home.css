@@ -1,0 +1,119 @@
+.main__clients {
+  margin-top: 60px;
+}
+
+.main__top-container {
+  display: grid;
+  gap: 40px;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo-outside-menu {
+  display: none;
+}
+
+.main__top-container label {
+  justify-self: end;
+}
+
+.main__clients-wrapper {
+  display: flex;
+  gap: 40px;
+  margin: 60px 0 100px 0;
+  flex-wrap: wrap;
+}
+
+.main__clients-card {
+  background: url("../../img/home/client-wrapper-bg.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  width: 330px;
+  height: 220px;
+  border-radius: 4px;
+  padding: 32px 20px;
+  display: grid;
+  box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.main__clients-card h3 {
+  align-self: flex-start;
+}
+
+.main__clients-card p {
+  align-self: end;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.main__clients-card .clients__card-client-number {
+  padding: 2px 6px;
+  background-color: var(--main-green-p);
+  color: var(--main-green-s);
+  border-radius: 4px;
+  border: 1px solid var(--main-green-s);
+}
+
+.list-warnings {
+  border-left: 4px solid var(--color-9);
+  padding-left: 8px;
+  margin: 0 auto;
+}
+
+.list-warnings li {
+  line-height: 1.8;
+}
+
+@media (max-width: 860px) {
+  .main__clients {
+    margin: 40px 20px;
+  }
+
+  .main__top-container {
+    grid-template-columns: 1fr;
+  }
+
+  .logo-outside-menu {
+    display: flex;
+    grid-row: 1;
+    border: none;
+    padding: 0;
+  }
+
+  .main__top-container label {
+    grid-row: 2;
+    width: 100%;
+  }
+  .main__top-container input {
+    width: 100%;
+  }
+
+  .main__top-container h1 {
+    grid-row: 3;
+  }
+
+  .main__clients-wrapper {
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 60px;
+  }
+
+  @media (max-width: 600px) {
+    .main__clients-card h3 {
+      font-size: 1.125rem;
+    }
+
+    .main__clients-card {
+      height: 180px;
+    }
+
+    .main__clients-card p,
+    .main__clients-card span {
+      font-size: 1rem;
+    }
+  }
+}

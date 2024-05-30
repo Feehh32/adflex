@@ -1,0 +1,24 @@
+@import "./global/global.css";
+@import "./utilities/typography.css";
+@import "./utilities/colors.css";
+@import "./global/header.css";
+@import "./utilities/animation.css";
+
+/* Utilities */
+@import "./utilities/components.css";
+
+/* home */
+@import "./home/clients-home.css";
+
+/* Form */
+@import "./form/form-os.css";
+@import "./form/form-client.css";
+
+/* Client */
+@import "./client/client.css";
+
+/* Service order */
+@import "./os_page/os_page.css";
+
+/* Month sales */
+@import "./month_sales/month_sales.css";
