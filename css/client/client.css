@@ -167,6 +167,16 @@
   padding: 5px 0;
 }
 
+.client__info-actions li a,
+button[data-action="send-mail"] {
+  transition: 0.3s;
+}
+
+.client__info-actions li a:hover,
+button[data-action="send-mail"]:hover {
+  color: var(--color-prim1);
+}
+
 .client__info-actions li button {
   background: none;
   border: none;

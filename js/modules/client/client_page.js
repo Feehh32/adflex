@@ -65,12 +65,12 @@ export default class ClientPage {
     const escapedCharge = ClientPage.escapeHTML(client.charge);
 
     const htmlContent = `
-          <li class="font-r-s color-3">email 1: <a class="font-r-m-b color-1"
+          <li class="font-r-s color-3">email 1: <a class="font-r-s color-1"
             href="mailto:${escapedEmail1}">${escapedEmail1}</a></li>
-          <li class="font-r-s color-3">email 2: <a class="font-r-m-b color-1"
+          <li class="font-r-s color-3">email 2: <a class="font-r-s color-1"
             href="mailto:${escapedEmail2}">${escapedEmail2}</a></li>
           <li class="font-r-s color-3">telefone 1:
-              <a class="font-r-m-b color-1" href="tel:+55
+              <a class="font-r-s color-1" href="tel:+55
               ${escapedTel1}
               ">${escapedTel1}</a>
           </li>
