@@ -147,6 +147,14 @@
                                 </div>
                             </fieldset>
                         </div>
+                        <fieldset>
+                            <label class="font-p-s-b" for="servicePrice0">Valor do orçamento</label>
+                            <input class="input-pattern" type="text" name="servicePrice" id="servicePrice"
+                                placeholder="Ex: 2500.50" data-serviceItem data-budget
+                                title="Apenas adicione algum valor aqui se houver um orçamento prévio com algum valor definido."
+                                pattern="^\d+(\.\d{1,2})?$">
+                            <span class="msgError"></span>
+                        </fieldset>
                         <fieldset class="hideMeasures__Wrapper">
                             <input type="checkbox" name="hideMeasure" value="nao" id="hiddenMeasures" data-serviceItem>
                             <label for="hiddenMeasures" class="font-r-m-b">Mostrar medidas na os</label>

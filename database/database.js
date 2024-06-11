@@ -13,6 +13,27 @@ if (!fs.existsSync(dbPath)) {
 
 const db = new sqlite.Database(dbPath);
 
+db.serialize(() => {
+  db.all("PRAGMA table_info(service_notes)", (err, columns) => {
+    if (err) {
+      console.error(err.message);
+      return;
+    }
+
+    const columnExists = columns.some((column) => column.name === "budgetValue");
+
+    if (!columnExists) {
+      db.run(`ALTER TABLE service_notes ADD COLUMN budgetValue REAL`, (error) => {
+        if (error) {
+          console.error(err.message);
+        } else {
+          console.log("Coluna 'budgetValue' adicionada com sucesso.");
+        }
+      });
+    }
+  });
+});
+
 // Cria a tabela de clientes
 db.serialize(() => {
   db.run(`
@@ -39,6 +60,7 @@ db.serialize(() => {
       code TEXT,
       hideMeasure TEXT,
       client_id INTEGER,
+      budgetValue REAL,
       FOREIGN KEY(client_id) REFERENCES clients(id)
     )
   `);

@@ -36,6 +36,10 @@ export default class FormOs {
         valueMissing: "O campo de altura não pode estar vazio.",
         patternMismatch: "Por favor insira as medidas apenas com números e pontos. Ex:2.5",
       },
+      servicePrice: {
+        patternMismatch:
+          "Por favor insira os valores apenas com números e pontos, sendo os pontos apenas para casas decimais. Ex: 2.50.",
+      },
     };
 
     this.handleServiceAmount = this.handleServiceAmount.bind(this);
@@ -63,50 +67,6 @@ export default class FormOs {
     selectField.innerHTML = option;
   }
 
-  // Lida com os acréscimos do campos de serviço
-  handleServiceAmount() {
-    this.counter++;
-    const newService = document.createElement("div");
-    const serviceWrapper = document.querySelector("[data-service]");
-    newService.classList.add("service");
-    newService.innerHTML += `
-    <fieldset>
-        <label class="font-p-s-b" for="serviceName${this.counter}">Nome do serviço</label>
-        <input class="input-pattern" type="text" name="serviceName" id="serviceName${this.counter}" data-serviceItem
-            required>
-        <span class="msgError"></span>
-    </fieldset>
-    <fieldset>
-        <label class="font-p-s-b" for="serviceAmount${this.counter}">Quantidade de peças</label>
-        <input class="input-pattern" type="number" name="serviceAmount" id="serviceAmount${this.counter}"
-            data-serviceItem required>
-        <span class="msgError"></span>
-    </fieldset>
-    <div class="service__measure">
-        <label class="font-p-s-b" for="measures${this.counter}">Medidas</label>
-        <fieldset id="measures${this.counter}" class="measure__container">
-            <div>
-                <input class="input-pattern inputWidth" type="text" id="width${this.counter}" name="width"
-                     data-serviceItem placeholder="Largura" required>
-                <span class="msgError"></span>
-            </div>
-            <div>
-                <input class="input-pattern inputHeight" type="text" id="height${this.counter}" name="height"
-                   data-serviceItem placeholder="Altura" required>
-                <span class="msgError"></span>
-            </div>
-        </fieldset>
-    </div>
-      <fieldset class="hideMeasures__Wrapper">
-        <input type="checkbox" name="hideMeasures" value="sim" id="hiddenMeasures" data-serviceItem>
-        <label for="hiddenMeasures" class="font-r-m-b">Esconder medidas na os</label>
-        <span class="msgError"></span>
-      </fieldset>
-      `;
-    serviceWrapper.appendChild(newService);
-    this.addMsgErrosOnForm();
-  }
-
   // Método que adiciona as mensagens de erro nos campos
   // do formulário
   addMsgErrosOnForm() {
@@ -118,6 +78,55 @@ export default class FormOs {
         // eslint-disable-next-line function-paren-newline
       );
     });
+  }
+
+  // Lida com os acréscimos do campos de serviço
+  handleServiceAmount() {
+    this.counter++;
+    const newService = document.createElement("div");
+    const serviceWrapper = document.querySelector("[data-service]");
+    newService.classList.add("service");
+    newService.innerHTML += `
+    <fieldset>
+        <label class="font-p-s-b" for="serviceName${this.counter}">Nome do serviço</label>
+        <input class="input-pattern" type="text" name="serviceName" id="serviceName${this.counter}" data-serviceItem>
+        <span class="msgError"></span>
+    </fieldset>
+    <fieldset>
+        <label class="font-p-s-b" for="serviceAmount${this.counter}">Quantidade de peças</label>
+        <input class="input-pattern" type="number" name="serviceAmount" id="serviceAmount${this.counter}"
+            data-serviceItem>
+        <span class="msgError"></span>
+    </fieldset>
+    <div class="service__measure">
+        <label class="font-p-s-b" for="measures${this.counter}">Medidas</label>
+        <fieldset id="measures${this.counter}" class="measure__container">
+            <div>
+                <input class="input-pattern inputWidth" type="text" id="width${this.counter}" name="width"
+                     data-serviceItem placeholder="Largura">
+                <span class="msgError"></span>
+            </div>
+            <div>
+                <input class="input-pattern inputHeight" type="text" id="height${this.counter}" name="height"
+                   data-serviceItem placeholder="Altura">
+                <span class="msgError"></span>
+            </div>
+        </fieldset>
+    </div>
+    <fieldset>
+        <label class="font-p-s-b" for="servicePrice${this.counter}">Valor do orçamento</label>
+        <input class="input-pattern" type="text" name="servicePrice" id="servicePrice${this.counter}"   placeholder="Ex: 2500.50" title="Apenas adicione algum valor aqui se houver um orçamento prévio com algum valor definido."
+          data-serviceItem data-budget pattern="^\\d+(\\.\\d{1,2})?$">
+        <span class="msgError"></span>
+    </fieldset>
+    <fieldset class="hideMeasures__Wrapper">
+      <input type="checkbox" name="hideMeasures" value="sim" id="hiddenMeasures" data-serviceItem>
+      <label for="hiddenMeasures" class="font-r-m-b">Esconder medidas na os</label>
+      <span class="msgError"></span>
+    </fieldset>
+  `;
+    serviceWrapper.appendChild(newService);
+    this.addMsgErrosOnForm();
   }
 
   // Método que faz o cálculo total da nota de serviço
@@ -165,15 +174,26 @@ export default class FormOs {
       const width = parseFloat(e.target.elements[`width${i}`].value);
       const height = parseFloat(e.target.elements[`height${i}`].value);
 
-      const serviceObj = {
-        serviceName,
-        serviceAmount,
-        width,
-        height,
-      };
-      this.serviceValues.push(serviceObj);
+      if (serviceName && serviceAmount && width && height) {
+        const serviceObj = {
+          serviceName,
+          serviceAmount,
+          width,
+          height,
+        };
+        this.serviceValues.push(serviceObj);
+      }
     }
     return this.serviceValues;
+  }
+
+  // Método que lida com o valor de orçamento no form
+
+  static handleBudgetValue() {
+    const budget = document.querySelector("[data-budget]");
+
+    if (budget.value) return +budget.value;
+    return 0;
   }
 
   // Método que lida com a requisição da nota de serviço
@@ -187,9 +207,11 @@ export default class FormOs {
       service: this.handleServiceValues(e),
       date: this.currentDate,
       total: 0,
+      budgetValue: FormOs.handleBudgetValue(),
     };
 
-    this.getChargeTotal(formObj);
+    if (!formObj.budgetValue > 0) this.getChargeTotal(formObj);
+
     try {
       const response = await apiServices.post("os", { os: formObj });
       if (response) {

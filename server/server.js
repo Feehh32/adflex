@@ -136,7 +136,7 @@ function serverStart(electronApp) {
     if (!req.body || !req.body.os) {
       return res.status(400).json({ error: "Corpo da solicitação inválido" });
     }
-    const { client, hideMeasure, thickness, service, date, total } = req.body.os;
+    const { client, hideMeasure, thickness, service, date, total, budgetValue } = req.body.os;
 
     // Obtenha o último código gerado para este cliente
     db.get("SELECT id FROM clients WHERE name = ?", [client], (err, row) => {
@@ -199,8 +199,8 @@ function serverStart(electronApp) {
             const clientId = row.id;
 
             db.run(
-              "INSERT INTO service_notes (client, client_id, code, hideMeasure, thickness, date, total) VALUES (?,?,?,?,?,?,?)",
-              [client, clientId, nextCode, hideMeasure, thickness, date, total],
+              "INSERT INTO service_notes (client, client_id, code, hideMeasure, thickness, date, total, budgetValue) VALUES (?,?,?,?,?,?,?,?)",
+              [client, clientId, nextCode, hideMeasure, thickness, date, total, budgetValue],
               function (err) {
                 if (err) {
                   return res.status(500).json({ error: err.message });
