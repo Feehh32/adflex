@@ -51,7 +51,7 @@ export default class OsPage {
 
     const serviceValues = document.querySelector(serviceContainer);
     filteredService.forEach((element) => {
-      const serviceValue = monetaryMask(element.serviceValue);
+      const serviceValue = this.os.budgetValue ? "" : monetaryMask(element.serviceValue);
       const measures = this.handleMeasure(element);
       serviceValues.innerHTML += `
           <ul class="content__values font-os-s-b">
@@ -92,7 +92,7 @@ export default class OsPage {
   // Cria e exibe o HTML da ordem de serviço
   showOsOnScreen() {
     if (this.os) {
-      const total = monetaryMask(this.os.total);
+      const total = monetaryMask(this.os.budgetValue > 0 ? this.os.budgetValue : this.os.total);
       const osContent = `
       <div class="os__header">
       <div class="os__logo--container">
