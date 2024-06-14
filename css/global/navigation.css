@@ -1,0 +1,29 @@
+.page__navigation {
+  display: flex;
+  max-width: 100%;
+  justify-content: space-between;
+  max-height: 40px;
+  padding: 0 16px;
+}
+
+.page__navigation-next,
+.page__navigation-prev {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  gap: 10px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.page__navigation-prev svg {
+  transform: rotate(180deg);
+}
+
+.page__navigation-prev svg:hover,
+.page__navigation-next:hover,
+.page__navigation-prev:hover {
+  color: var(--color-3);
+}

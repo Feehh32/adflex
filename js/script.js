@@ -10,6 +10,7 @@ import MonthSales from "./modules/month_sales/month_sales.js";
 
 // requisições fetch
 import ApiService from "./modules/helpers/api_service.js";
+import Navigation from "./modules/global/navigation.js";
 
 const url = "http://localhost:3000";
 
@@ -84,3 +85,6 @@ const monthSales = new MonthSales(
   os
 );
 monthSales.init();
+
+const navigation = new Navigation(".page__navigation-prev", ".page__navigation-next");
+navigation.init();

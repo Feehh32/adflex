@@ -25,7 +25,7 @@ function createWindow() {
     height: 870,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: true,
+      contextIsolation: false,
     },
   });
 
