@@ -1,6 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 import { fieldValidation, showMessage } from "./form_validations.js";
 import ApiService from "../helpers/api_service.js";
+import parseDate from "../helpers/parseDate.js";
 
 export default class FormOs {
   constructor(form, btnServAmount, services, clients, os, url) {
@@ -10,7 +11,6 @@ export default class FormOs {
     this.clients = clients;
     this.os = os;
     this.url = url;
-
     this.hiddenMeasure = true;
     this.serviceValues = [];
     this.currentDate = FormOs.getCurrentDate();
@@ -152,14 +152,51 @@ export default class FormOs {
   static getCurrentDate() {
     const currentDate = new Date();
 
-    const options = {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    };
-    const formattedDate = currentDate.toLocaleDateString("pt-BR", options);
-    return formattedDate;
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, 0);
+    const day = String(currentDate.getDate()).padStart(2, 0);
+    const hour = String(currentDate.getHours()).padStart(2, 0);
+    const minutes = String(currentDate.getMinutes()).padStart(2, 0);
+    const seconds = String(currentDate.getSeconds()).padStart(2, 0);
+
+    return `${day}-${month}-${year}-${hour}-${minutes}-${seconds}`;
+  }
+
+  static findLastOsByDate(notes) {
+    console.log(notes);
+    if (notes.length === 0) return null;
+
+    let mostRecentNote = notes[0];
+
+    notes.forEach((note) => {
+      if (parseDate(note.date) > parseDate(mostRecentNote.date)) {
+        mostRecentNote = note;
+      }
+    });
+
+    return mostRecentNote;
+  }
+
+  static ComparingDate(currentDate, lastOsDate) {
+    if (lastOsDate) {
+      // eslint-disable-next-line no-unused-vars
+      const [cDay, cMonth, cYear, cHour, cMinute, cSeconds] = currentDate.split("-");
+      // eslint-disable-next-line no-unused-vars
+      const [lOsDay, lOsMonth, lOsYear, lOsHour, lOsMinute, lOsSeconds] = lastOsDate.split("-");
+
+      return cMonth === lOsMonth && cYear === lOsYear;
+    }
+
+    return null;
+  }
+
+  getOsCode(date) {
+    const lastOs = FormOs.findLastOsByDate(this.os);
+    console.log(lastOs);
+    if (lastOs !== null && date && FormOs.ComparingDate(date, lastOs.date)) {
+      return String(Number(lastOs.code) + 1).padStart(3, 0);
+    }
+    return "1".padStart(3, 0);
   }
 
   // Métodos de execução
@@ -207,16 +244,17 @@ export default class FormOs {
       service: this.handleServiceValues(e),
       date: this.currentDate,
       total: 0,
+      code: this.getOsCode(this.currentDate),
       budgetValue: FormOs.handleBudgetValue(),
     };
 
     if (!formObj.budgetValue > 0) this.getChargeTotal(formObj);
 
     try {
-      const response = await apiServices.post("os", { os: formObj });
-      if (response) {
-        const newOsId = response.id;
-        window.location.href = `./os_page.html?id=${encodeURIComponent(newOsId)}`;
+      const { noteId } = await apiServices.post("os", { os: formObj });
+
+      if (noteId) {
+        // window.location.href = `./os_page.html?id=${encodeURIComponent(noteId)}`;
         showMessage(this.form, "Os adicionada com sucesso", "active");
       }
     } catch (error) {

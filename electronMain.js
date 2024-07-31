@@ -4,7 +4,8 @@ const { app, BrowserWindow, Menu, nativeImage } = require("electron");
 const localShortcut = require("electron-localshortcut");
 const path = require("path");
 const log = require("electron-log");
-const serverStart = require("./server/server.js");
+// const serverStart = require("./server/server.js");
+const initServer = require("./server/server_model.js");
 
 log.transports.file(path.join(__dirname, "logs.log"));
 
@@ -50,7 +51,7 @@ function createWindow() {
     console.error("Uncaught Exception:", error);
   });
 
-  serverStart(app);
+  initServer(app);
 }
 
 app.whenReady().then(createWindow);
