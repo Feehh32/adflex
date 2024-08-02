@@ -2,10 +2,9 @@ import ApiService from "../helpers/api_service.js";
 import eventEmitter from "../helpers/event_emitter.js";
 
 export default class ClientPage {
-  constructor(clientName, infoClientWrapper, btnDelete, btnEmail, clients, url) {
+  constructor(clientName, infoClientWrapper, btnDelete, clients, url) {
     this.clientName = document.querySelector(clientName);
     this.btnDelete = document.querySelector(btnDelete);
-    this.btnEmail = document.querySelector(btnEmail);
     this.infoClientWrapper = document.querySelector(infoClientWrapper);
     this.url = url;
 
@@ -14,7 +13,6 @@ export default class ClientPage {
     this.msgWrapper = document.createElement("span");
 
     this.deleteClient = this.deleteClient.bind(this);
-    this.sendEmail = this.sendEmail.bind(this);
   }
 
   // métodos de auxilio
@@ -116,31 +114,6 @@ export default class ClientPage {
 
   // métodos de ação ou gerais
 
-  // constroi e envia o email para o back end com uma requisição POST
-  async sendEmail() {
-    const apiServices = new ApiService(this.url);
-    const formData = {
-      to: this.client.email1,
-      subject: "Cadastro de Nota Fiscal",
-      text: `Segue em anexo os dados para o cadastro da nota fiscal.`,
-      html: `<p>Segue em anexo os dados para o cadastro da nota fiscal.</p>
-      <br/><p>Ademir Xavier Joazeiro</p>`,
-    };
-    apiServices.post("send_email", formData);
-    eventEmitter.on("sucessMsg", async () => {
-      this.showMsg(`Email enviado com sucesso!`, "sucessMsg");
-      setTimeout(() => {
-        this.removeMsg();
-      }, 2000);
-    });
-    eventEmitter.on("failedMsg", async () => {
-      this.showMsg(`Falha ao enviar o email!`, "failedMsg");
-      setTimeout(() => {
-        this.removeMsg();
-      }, 2000);
-    });
-  }
-
   // Insere o link para as ações de nova os e editar o cliente
   insertLink() {
     const newOsHref = document.querySelector('[data-action="nova-os"]');
@@ -189,14 +162,9 @@ export default class ClientPage {
     this.btnDelete.addEventListener("click", this.deleteClient);
   }
 
-  addEventOnSendEmail() {
-    this.btnEmail.addEventListener("click", this.sendEmail);
-  }
-
   init() {
     if (this.client && this.infoClientWrapper) {
       this.addEventOnDelete();
-      this.addEventOnSendEmail();
       this.insertLink();
       this.showClientName();
       this.showClientInfo();

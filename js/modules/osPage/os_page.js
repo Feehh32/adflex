@@ -1,6 +1,7 @@
 import ApiService from "../helpers/api_service.js";
 import eventEmitter from "../helpers/event_emitter.js";
 import monetaryMask from "../helpers/monetaryMask.js";
+import { handleCustomDate } from "../helpers/formatDate.js";
 
 export default class OsPage {
   constructor(os, titleCode, osWrapper, btn, url) {
@@ -92,6 +93,7 @@ export default class OsPage {
   // Cria e exibe o HTML da ordem de serviço
   showOsOnScreen() {
     if (this.os) {
+      const customDate = handleCustomDate(this.os.date);
       const total = monetaryMask(this.os.budgetValue > 0 ? this.os.budgetValue : this.os.total);
       const osContent = `
       <div class="os__header">
@@ -110,7 +112,7 @@ export default class OsPage {
           <span class="font-os-xxs">Cliente:</span>
           <p class="font-os-s-b">${this.os.client}</p>
       </div>
-      <p class="font-os-s-b ">${this.os.date}</p>
+      <p class="font-os-s-b ">${customDate}</p>
       </div>
       <div class="os__thickness position__os">
       <span class="font-os-xxs color-11">Espessura:</span>

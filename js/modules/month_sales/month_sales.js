@@ -1,5 +1,6 @@
 import monetaryMask from "../helpers/monetaryMask";
 import { fieldValidation } from "../client/form_validations";
+import { handleCustomDate } from "../helpers/formatDate.js";
 
 /* eslint-disable operator-linebreak */
 export default class MonthSales {
@@ -43,19 +44,45 @@ export default class MonthSales {
     });
   }
 
-  // Filtra  a os baseado nos dos do formulário preenchido
+  // transformando o mês escrito em nome para escrito como numero
+  static turningMonthInNumber(monthName) {
+    const monthObj = {
+      janeiro: "01",
+      fevereiro: " 02",
+      março: "03",
+      abril: "04",
+      maio: "05",
+      junho: "06",
+      julho: "07",
+      agosto: "08",
+      setembro: "09",
+      outubro: "10",
+      novembro: "11",
+      dezembro: "12",
+    };
+
+    return monthObj[monthName.toLowerCase()] || null;
+  }
+
+  // Filtra a os baseado nos dos do formulário preenchido
   // buscando eles no localStorage
   filterOs() {
     const lsData = localStorage.getItem("formData");
     if (lsData) {
       this.dataForm = JSON.parse(lsData);
     }
-    this.filteredOs = this.os.filter(
-      (item) =>
-        item.client.includes(this.dataForm.clientSale) &&
-        item.date.includes(this.dataForm.monthSale.toLowerCase()) &&
-        item.date.includes(this.dataForm.yearSale)
-    );
+    this.filteredOs = this.os.filter((item) => {
+      const [, cMonth, cYear] = item.date.split("-");
+      const monthNumber = MonthSales.turningMonthInNumber(this.dataForm.monthSale.toLowerCase());
+      if (monthNumber) {
+        return (
+          item.client === this.dataForm.clientSale &&
+          cMonth === monthNumber &&
+          cYear === this.dataForm.yearSale
+        );
+      }
+      return this.filteredOs;
+    });
   }
 
   // Define o que será mostrado na tela caso o a busca no formúlario
@@ -72,11 +99,13 @@ export default class MonthSales {
   static ifRightDate(filteredOs) {
     let contentScreen = "";
     filteredOs.forEach((os) => {
-      const osTotal = monetaryMask(os.total);
+      const customMonth = handleCustomDate(os.date);
+      const totalValue = os.budgetValue > 0 && os.budgetValue !== null ? os.budgetValue : os.total;
+      const osTotal = monetaryMask(totalValue);
       contentScreen += ` 
           <ul class="sales__report-item font-os-m-b color-13">
             <li>${os.code}</li>
-            <li>${os.date}</li>
+            <li>${customMonth}</li>
             <li>${osTotal}</li>
           </ul>`;
     });
@@ -95,9 +124,12 @@ export default class MonthSales {
 
   // Calcura o total das vendas do mês
   calculateTotal() {
+    console.log(this.filteredOs);
     if (this.filteredOs.length) {
+      this.total = 0;
       this.filteredOs.forEach((os) => {
         this.total += os.total;
+        if (os.budgetValue > 0 && os.budgetValue !== null) this.total += os.budgetValue;
       });
     }
   }

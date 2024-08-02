@@ -1,3 +1,5 @@
+import { handleCustomDate } from "../helpers/formatDate.js";
+
 /* eslint-disable operator-linebreak */
 export default class ClientOs {
   constructor(osWrapper, osSearch, btnShowMore, btnShowLess, osList, client) {
@@ -31,6 +33,7 @@ export default class ClientOs {
     this.osWrapper.innerHTML = "";
 
     revFilteredOs.forEach((os) => {
+      const customDate = handleCustomDate(os.date);
       const li = document.createElement("li");
       const htmlOs = ` 
                         <a href="./os_page.html?id=${os.id}">
@@ -39,7 +42,7 @@ export default class ClientOs {
                                 alt="icone de uma ordem de serviço">
                                 ${os.code}
                                 </span>
-                            <p>${os.date}</p>
+                            <p>${customDate}</p>
                         </a>`;
       li.innerHTML = htmlOs;
       this.osWrapper.appendChild(li);

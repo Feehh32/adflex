@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 import { fieldValidation, showMessage } from "./form_validations.js";
 import ApiService from "../helpers/api_service.js";
-import parseDate from "../helpers/parseDate.js";
+import { parseDate } from "../helpers/formatDate.js";
 
 export default class FormOs {
   constructor(form, btnServAmount, services, clients, os, url) {
@@ -121,7 +121,7 @@ export default class FormOs {
     </fieldset>
     <fieldset class="hideMeasures__Wrapper">
       <input type="checkbox" name="hideMeasures" value="sim" id="hiddenMeasures" data-serviceItem>
-      <label for="hiddenMeasures" class="font-r-m-b">Esconder medidas na os</label>
+      <label for="hiddenMeasures" class="font-r-m-b">Mostrar medidas na os</label>
       <span class="msgError"></span>
     </fieldset>
   `;
@@ -162,13 +162,14 @@ export default class FormOs {
     return `${day}-${month}-${year}-${hour}-${minutes}-${seconds}`;
   }
 
-  static findLastOsByDate(notes) {
-    console.log(notes);
+  static findLastOs(notes, clientName) {
     if (notes.length === 0) return null;
 
-    let mostRecentNote = notes[0];
+    const filteredNotes = notes.filter((note) => note.client === clientName);
+    let mostRecentNote = filteredNotes[0];
 
-    notes.forEach((note) => {
+    if (filteredNotes.length === 0) return null;
+    filteredNotes.forEach((note) => {
       if (parseDate(note.date) > parseDate(mostRecentNote.date)) {
         mostRecentNote = note;
       }
@@ -180,9 +181,9 @@ export default class FormOs {
   static ComparingDate(currentDate, lastOsDate) {
     if (lastOsDate) {
       // eslint-disable-next-line no-unused-vars
-      const [cDay, cMonth, cYear, cHour, cMinute, cSeconds] = currentDate.split("-");
+      const [, cMonth, cYear] = currentDate.split("-");
       // eslint-disable-next-line no-unused-vars
-      const [lOsDay, lOsMonth, lOsYear, lOsHour, lOsMinute, lOsSeconds] = lastOsDate.split("-");
+      const [, lOsMonth, lOsYear] = lastOsDate.split("-");
 
       return cMonth === lOsMonth && cYear === lOsYear;
     }
@@ -190,9 +191,8 @@ export default class FormOs {
     return null;
   }
 
-  getOsCode(date) {
-    const lastOs = FormOs.findLastOsByDate(this.os);
-    console.log(lastOs);
+  getOsCode(date, clientName) {
+    const lastOs = FormOs.findLastOs(this.os, clientName);
     if (lastOs !== null && date && FormOs.ComparingDate(date, lastOs.date)) {
       return String(Number(lastOs.code) + 1).padStart(3, 0);
     }
@@ -230,21 +230,22 @@ export default class FormOs {
     const budget = document.querySelector("[data-budget]");
 
     if (budget.value) return +budget.value;
-    return 0;
+    return null;
   }
 
   // Método que lida com a requisição da nota de serviço
   async handleRegister(e) {
     e.preventDefault();
     const apiServices = new ApiService(this.url);
+    const clientName = e.target.elements.client.value;
     const formObj = {
-      client: e.target.elements.client.value,
+      client: clientName,
       hideMeasure: this.getHiddenMeasure(),
       thickness: e.target.elements.thickness.value,
       service: this.handleServiceValues(e),
       date: this.currentDate,
       total: 0,
-      code: this.getOsCode(this.currentDate),
+      code: this.getOsCode(this.currentDate, clientName),
       budgetValue: FormOs.handleBudgetValue(),
     };
 
@@ -254,7 +255,7 @@ export default class FormOs {
       const { noteId } = await apiServices.post("os", { os: formObj });
 
       if (noteId) {
-        // window.location.href = `./os_page.html?id=${encodeURIComponent(noteId)}`;
+        window.location.href = `./os_page.html?id=${encodeURIComponent(noteId)}`;
         showMessage(this.form, "Os adicionada com sucesso", "active");
       }
     } catch (error) {

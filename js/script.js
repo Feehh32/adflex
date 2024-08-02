@@ -45,7 +45,6 @@ const clientPage = new ClientPage(
   '[data-name="client"]',
   '[data-info="client"]',
   '[data-action="delete-client"]',
-  '[data-action="send-mail"]',
   clients,
   url
 );
