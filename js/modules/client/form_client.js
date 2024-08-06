@@ -71,6 +71,9 @@ export default class FormClient {
   // Método que chama a classe ApiService para fazer um requisição post
   async handleRegister(e) {
     e.preventDefault();
+    const btnAdd = document.querySelector(".btn_client--add");
+    btnAdd.innerText = "...ENVIANDO";
+    btnAdd.disabled = "true";
     const apiServices = new ApiService(this.url);
     const formData = new FormData(this.form);
     const formObj = Object.fromEntries(formData.entries());
@@ -79,8 +82,8 @@ export default class FormClient {
       const response = await apiServices.post("clients", { clients: formObj });
       if (response) {
         const newClientId = response.id;
-        window.location.href = `./client.html?id=${encodeURIComponent(newClientId)}`;
         showMessage(this.form, "Cliente adicionado com sucesso", "active");
+        window.location.href = `./client.html?id=${encodeURIComponent(newClientId)}`;
       }
     } catch {
       showMessage(this.form, "Ocorreu um erro ao registrar o cliente!", "activeError");

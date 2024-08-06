@@ -51,6 +51,7 @@ export default class OsPage {
     const filteredService = service.filter((item) => item.note_id === this.os.id);
 
     const serviceValues = document.querySelector(serviceContainer);
+    serviceValues.innerHTML = "";
     filteredService.forEach((element) => {
       const serviceValue = this.os.budgetValue ? "" : monetaryMask(element.serviceValue);
       const measures = this.handleMeasure(element);
@@ -94,7 +95,11 @@ export default class OsPage {
   showOsOnScreen() {
     if (this.os) {
       const customDate = handleCustomDate(this.os.date);
-      const total = monetaryMask(this.os.budgetValue > 0 ? this.os.budgetValue : this.os.total);
+      const total = monetaryMask(
+        this.os.budgetValue > 0 || this.os.budgetValue !== null
+          ? this.os.budgetValue
+          : this.os.total
+      );
       const osContent = `
       <div class="os__header">
       <div class="os__logo--container">
@@ -156,7 +161,7 @@ export default class OsPage {
   }
 
   // Deleta a ordem de serviço
-  deleteOs() {
+  async deleteOs() {
     if (this.os) {
       // eslint-disable-next-line no-alert
       const confirmation = window.confirm(
@@ -165,18 +170,28 @@ export default class OsPage {
 
       if (confirmation) {
         const apiServices = new ApiService(this.url, this.os.id);
-        apiServices.delete("os");
-        this.os = null;
-        this.showOsOnScreen();
-        eventEmitter.on("failedMsg", async () => {
-          this.showDeleteMsg(
-            `<p class="font-r-l-b">Houve um problema e a os não pode ser deletada, tente novamente mais tarde!</p>`,
-            "failedMsg"
-          );
-          setTimeout(() => {
-            this.removeDeleteMsg();
-          }, 2000);
-        });
+        try {
+          const response = await apiServices.delete("os");
+          if (response && response.clientId) {
+            this.os = null;
+            this.showOsOnScreen();
+            this.btn[1].disabled = "true";
+            setTimeout(() => {
+              window.location.href = `./client.html?id=${encodeURIComponent(response.clientId)}`;
+            }, 2000);
+          }
+        } catch (err) {
+          console.error("Erro ao deletar a os:", err);
+          eventEmitter.on("failedMsg", async () => {
+            this.showDeleteMsg(
+              `<p class="font-r-l-b">Houve um problema e a os não pode ser deletada, tente novamente mais tarde!</p>`,
+              "failedMsg"
+            );
+            setTimeout(() => {
+              this.removeDeleteMsg();
+            }, 2000);
+          });
+        }
       }
     }
   }
@@ -186,7 +201,9 @@ export default class OsPage {
     this.btn.forEach((btn) => {
       if (btn.innerText === "EXCLUIR") {
         btn.addEventListener("click", this.deleteOs);
+        btn.addEventListener("click", this.deleteOs);
       } else {
+        btn.addEventListener("click", this.printServiceOrder);
         btn.addEventListener("click", this.printServiceOrder);
       }
     });

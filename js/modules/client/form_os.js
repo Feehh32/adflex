@@ -72,6 +72,11 @@ export default class FormOs {
   addMsgErrosOnForm() {
     this.services = document.querySelectorAll("[data-serviceItem]");
     this.services.forEach((serviceField) => {
+      serviceField.removeEventListener(
+        "blur",
+        (e) => fieldValidation(e.target, this.errsMsg, this.errsType, ".msgError")
+        // eslint-disable-next-line function-paren-newline
+      );
       serviceField.addEventListener(
         "blur",
         (e) => fieldValidation(e.target, this.errsMsg, this.errsType, ".msgError")
@@ -236,6 +241,9 @@ export default class FormOs {
   // Método que lida com a requisição da nota de serviço
   async handleRegister(e) {
     e.preventDefault();
+    const btnAdd = document.querySelector(".btn_form--add");
+    btnAdd.disabled = "true";
+    btnAdd.innerText = "...Enviando";
     const apiServices = new ApiService(this.url);
     const clientName = e.target.elements.client.value;
     const formObj = {
@@ -253,10 +261,9 @@ export default class FormOs {
 
     try {
       const { noteId } = await apiServices.post("os", { os: formObj });
-
       if (noteId) {
-        window.location.href = `./os_page.html?id=${encodeURIComponent(noteId)}`;
         showMessage(this.form, "Os adicionada com sucesso", "active");
+        window.location.href = `./os_page.html?id=${encodeURIComponent(noteId)}`;
       }
     } catch (error) {
       showMessage(this.form, "Ocorreu um erro ao registrar a os!", "activeError");

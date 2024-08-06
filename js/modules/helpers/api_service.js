@@ -69,12 +69,13 @@ export default class ApiService {
       const response = await fetch(url, {
         method: "DELETE",
       });
-
+      const data = await response.json();
       if (!response.ok) {
         eventEmitter.emit("failedMsg");
-        throw new Error(`HTTP error! status: ${response.statusText}`);
+        throw new Error(data.error || `Erro ao deletar`);
       }
       eventEmitter.emit("sucessMsg");
+      return data;
     } catch (error) {
       console.error(error);
       throw error;
