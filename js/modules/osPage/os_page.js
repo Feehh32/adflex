@@ -96,9 +96,9 @@ export default class OsPage {
     if (this.os) {
       const customDate = handleCustomDate(this.os.date);
       const total = monetaryMask(
-        this.os.budgetValue > 0 || this.os.budgetValue !== null
-          ? this.os.budgetValue
-          : this.os.total
+        this.os.budgetValue === 0 || this.os.budgetValue === null
+          ? this.os.total
+          : this.os.budgetValue
       );
       const osContent = `
       <div class="os__header">

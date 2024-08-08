@@ -2,332 +2,311 @@ const express = require("express");
 const path = require("path");
 const { app: appElectron } = require("electron");
 const cors = require("cors");
-const fs = require("fs");
 
-const pathReceived = appElectron.getAppPath();
 const app = express();
-const dbPath = path.join(pathReceived, "database", "database.js");
 const appPath = appElectron.getPath("userData");
-const pdfPath = path.join(appPath, "documento-dados-nota-fiscal.pdf");
 const envPath = path.join(appPath, ".env");
 
-const db = require(dbPath);
+require("dotenv").config({ path: envPath });
+const supabase = require("./supabaseClient.js");
+
 const port = 3000;
 
-require("dotenv").config({ path: envPath });
-const formData = require("form-data");
-const Mailgun = require("mailgun.js");
-
-const mailgun = new Mailgun(formData);
-const mg = mailgun.client({
-  username: "api",
-  key: process.env.MAILGUN_KEY,
-});
-
-function serverStart(electronApp) {
+function initServer(electronApp) {
   app.use(cors());
-
   app.use(express.json());
   app.listen(port, () => {
     console.log(`Servidor rodando na porta ${port}`);
   });
 
-  // buscando clientes no banco de dados
-  app.get("/clients", (req, res) => {
-    db.all("SELECT * FROM clients", (err, rows) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-      res.json({ clients: rows });
-    });
+  // ================= Métodos de GET ====================
+
+  // Buscando clientes no banco de dados
+  app.get("/clients", async (req, res) => {
+    try {
+      const { data, error } = await supabase.from("clients").select("*");
+      if (error) throw error;
+      res.json({ clients: data });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
   });
 
-  // Inserir os dados do cliente no banco de dados
-  app.post("/clients", (req, res, next) => {
+  // Buscando notas de serviço no banco de dados
+  app.get("/os", async (req, res) => {
+    try {
+      const { data, error } = await supabase.from("service_notes").select("*");
+      if (error) throw error;
+      res.json({ os: data });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // Buscando as informações da nota de serviço no banco de dados
+  app.get("/service_details", async (req, res) => {
+    try {
+      const { data, error } = await supabase.from("service_details").select("*");
+      if (error) throw error;
+      res.json({ data });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // ================= Métodos de POST ====================
+
+  // Inserindo um cliente no banco de dados
+
+  app.post("/clients", async (req, res, next) => {
     const { name, email1, email2, tel1, tel2, charge } = req.body.clients;
+    try {
+      const { data: existingClient, error } = await supabase
+        .from("clients")
+        .select("*")
+        .ilike("name", `%${name.toLowerCase()}%`);
+      if (error) throw error;
 
-    db.get("SELECT * FROM clients WHERE LOWER(name) = LOWER(?)", [name], (err, row) => {
-      if (err) {
-        console.error("Erro ao verificar cliente:", err);
-        return res
-          .status(500)
-          .json({ error: "Erro interno do servidor. Por favor, tente novamente mais tarde." });
-      }
-
-      if (row) {
+      if (existingClient.length > 0) {
         return res.status(409).json({
-          error: "Cliente já existe. Por favor, verifique as informações e tente novamente.",
+          error: "Client já existe. Por favor, verifique as informações e tente novamente.",
         });
       }
 
-      db.run(
-        "INSERT INTO clients (name, email1, email2, tel1, tel2, charge) VALUES (?,?,?,?,?,?)",
-        [name, email1, email2, tel1, tel2, charge],
-        function (err) {
-          if (err) {
-            return next(err);
-          }
-          res.json({ id: this.lastID });
-        }
-      );
-    });
-  });
+      const { data: newClient, error: insertError } = await supabase
+        .from("clients")
+        .insert([
+          {
+            name,
+            email1,
+            email2,
+            tel1,
+            tel2,
+            charge,
+          },
+        ])
+        .select();
 
-  app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send({ error: err.message });
-  });
+      if (insertError) throw insertError;
 
-  // Atualizar os dados do cliente
-  app.put("/clients/:id", (req, res) => {
-    const clientId = req.params.id;
-    const { name, email1, email2, tel1, tel2, charge } = req.body;
-
-    db.run(
-      "UPDATE clients SET name = ?, email1 = ?, email2 = ?, tel1 = ?, tel2 = ?, charge = ? WHERE id = ?",
-      [name, email1, email2, tel1, tel2, charge, clientId],
-      (err) => {
-        if (err) {
-          return res.status(500).json({ error: err.message });
-        }
-        res.json({ message: "Cliente atualizado com sucesso" });
+      if (newClient && newClient.length) {
+        res.json({ id: newClient[0].id });
+      } else {
+        res.status(500).json({ error: "Falha ao inserir novo cliente." });
       }
-    );
+    } catch (err) {
+      next(err.message);
+    }
   });
 
-  // Deletar dados do cliente
-
-  app.delete("/clients/:id", (req, res) => {
-    const clientId = req.params.id;
-
-    db.get("SELECT * FROM clients WHERE id = ?", [clientId], (err, row) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-
-      if (!row) {
-        return res.status(404).json({ error: "Cliente não encontrado." });
-      }
-
-      db.run("DELETE FROM clients WHERE id = ?", [clientId], (err) => {
-        if (err) {
-          return res.status(500).json({ error: err.message });
-        }
-
-        res.json({ message: "Cliente excluido com sucesso" });
-      });
-    });
-  });
-
-  // buscando notas de serviço no banco de dados
-
-  app.get("/os", (req, res) => {
-    db.all("SELECT * FROM service_notes", (err, rows) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-
-      res.json({ os: rows });
-    });
-  });
-
-  // Inserir nota de serviço baseado no cliente descrito na nota
-  app.post("/os", (req, res) => {
+  // Inserir notas de serviço no banco de dados,
+  // com base nos clientes descritos na nota
+  app.post("/os", async (req, res) => {
     if (!req.body || !req.body.os) {
       return res.status(400).json({ error: "Corpo da solicitação inválido" });
     }
-    const { client, hideMeasure, thickness, service, date, total, budgetValue } = req.body.os;
 
-    // Obtenha o último código gerado para este cliente
-    db.get("SELECT id FROM clients WHERE name = ?", [client], (err, row) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
+    const { client, hideMeasure, thickness, service, date, total, code, budgetValue } = req.body.os;
+
+    const thicknessValue = thickness ? Number(thickness) : null;
+    // Recuperando o ID do cliente segundo a nota de serviço
+    try {
+      const { data: clientData, error: clientIdError } = await supabase
+        .from("clients")
+        .select("id")
+        .ilike("name", `%${client}%`);
+
+      if (clientIdError) throw clientIdError;
+
+      if (clientData.length === 0) {
+        return res.status(404).json({ error: "Cliente não encontrado." });
       }
 
-      if (!row) {
-        return res.status(404).json({ error: "Cliente não encontrado" });
-      }
-      const clientId = row.id;
+      const clientId = clientData[0].id;
 
-      db.get(
-        "SELECT code FROM service_notes WHERE client_id = ? ORDER BY id DESC LIMIT 1",
-        [clientId],
-        (err, row) => {
-          if (err) {
-            return res.status(500).json({ error: err.message });
+      const { data: newNoteService, error: noteServiceError } = await supabase
+        .from("service_notes")
+        .insert([
+          {
+            client,
+            client_id: clientId,
+            hideMeasure,
+            thickness: thicknessValue,
+            date,
+            total,
+            code,
+            budgetValue,
+          },
+        ])
+        .select()
+        .single();
+
+      if (noteServiceError) throw noteServiceError;
+      if (newNoteService) {
+        const noteId = newNoteService.id;
+
+        const servicePromise = service.map(async (info) => {
+          const result = await supabase
+            .from("service_details")
+            .insert([
+              {
+                note_id: noteId,
+                serviceName: info.serviceName,
+                serviceAmount: info.serviceAmount,
+                width: info.width,
+                height: info.height,
+                serviceValue: info.serviceValue,
+              },
+            ])
+            .select();
+
+          if (result.error) {
+            console.error("Erro ao inserir detalhe do serviço:", result.error);
+            return result;
           }
 
-          let nextCode;
-          if (row) {
-            const lastCode = row.code;
-            const lastMonth = date.split("de")[1].replace(/\s/g, "");
-            const monthNumber = new Date().getMonth();
-            const monthNames = [
-              "janeiro",
-              "fevereiro",
-              "março",
-              "abril",
-              "maio",
-              "junho",
-              "julho",
-              "agosto",
-              "setembro",
-              "outubro",
-              "novembro",
-              "dezembro",
-            ];
-
-            const currentMonth = monthNames[monthNumber];
-            if (lastMonth === currentMonth) {
-              nextCode = (parseInt(lastCode) + 1).toString().padStart(3, "0");
-            } else {
-              nextCode = "001";
-            }
-          } else {
-            nextCode = "001";
-          }
-
-          db.get("SELECT id FROM clients WHERE name = ?", [client], (err, row) => {
-            if (err) {
-              return res.status(500).json({ error: err.message });
-            }
-
-            if (!row) {
-              return res.status(404).json({ error: "Cliente não encontrado" });
-            }
-
-            const clientId = row.id;
-
-            db.run(
-              "INSERT INTO service_notes (client, client_id, code, hideMeasure, thickness, date, total, budgetValue) VALUES (?,?,?,?,?,?,?,?)",
-              [client, clientId, nextCode, hideMeasure, thickness, date, total, budgetValue],
-              function (err) {
-                if (err) {
-                  return res.status(500).json({ error: err.message });
-                }
-
-                const noteId = this.lastID;
-
-                service.forEach((detail) => {
-                  db.run(
-                    "INSERT INTO service_details(note_id, serviceName, serviceAmount, width, height, serviceValue) VALUES(?,?,?,?,?,?)",
-                    [
-                      noteId,
-                      detail.serviceName,
-                      detail.serviceAmount,
-                      detail.width,
-                      detail.height,
-                      detail.serviceValue,
-                    ],
-                    (err) => {
-                      if (err) {
-                        return res.status(500).json({ error: err.message });
-                      }
-                    }
-                  );
-                });
-
-                res.json({ id: noteId });
-              }
-            );
-          });
-        }
-      );
-    });
-  });
-
-  // Deletando as notas de serviço
-
-  app.delete("/os/:id", (req, res) => {
-    const noteId = req.params.id;
-
-    db.get("SELECT * FROM service_notes WHERE id = ?", [noteId], (err, row) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-
-      if (!row) {
-        return res.status(404).json({ error: "Nota de serviço não encontrada." });
-      }
-      db.run("DELETE FROM service_details WHERE note_id = ?", [noteId], (err) => {
-        if (err) {
-          return res.status(500).json({ error: err.message });
-        }
-
-        db.run("DELETE FROM service_notes WHERE id = ?", [noteId], function (err) {
-          if (err) {
-            return res.status(500).json({ error: err.message });
-          }
-
-          if (this.changes === 0) {
-            return res.status(500).json({ error: "Nota de serviço não encontrada" });
-          }
-
-          res.json({ message: "Nota de serviço excluida com sucesso" });
+          return result;
         });
-      });
-    });
+
+        const serviceResults = await Promise.all(servicePromise);
+        const serviceErrors = serviceResults.filter((result) => result.error);
+
+        if (serviceErrors.length > 0) {
+          return res.status(500).json({ error: "Falhas ao inserir detalhes do serviço." });
+        }
+        res.json({ message: "Nota de serviço inseridos com sucesso.", noteId });
+      }
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
   });
 
-  // Consultando os serviços da nota de serviço
-  app.get("/service_details/:noteId", (req, res) => {
-    const { noteId } = req.params;
+  // ================= Métodos de PUT ====================
 
-    db.all("SELECT * FROM service_details WHERE note_id = ?", [noteId], (err, rows) => {
-      if (err) {
-        res.status(500).json({ error: err.message });
-        return;
+  // Atualizando ou alterando os dados do client cadastrado baseado no ID do mesmo
+  app.put("/clients/:id", async (req, res) => {
+    const clientId = parseInt(req.params.id, 10);
+    const { name, email1, email2, tel1, tel2, charge } = req.body;
+    try {
+      const { data, error } = await supabase
+        .from("clients")
+        .update({
+          name,
+          email1,
+          email2,
+          tel1,
+          tel2,
+          charge,
+        })
+        .eq("id", clientId)
+        .select();
+
+      if (error) throw error;
+
+      if (data.length === 0) {
+        return res.status(404).json({ error: "Cliente não encontrado." });
       }
 
-      res.json({ data: rows });
-    });
+      res.json({ message: "Cliente atualizado com sucesso", client: data[0] });
+    } catch (err) {
+      res.status(500).json({ err: err.message });
+    }
   });
 
-  // Buscando todos os serviços
-  app.get("/service_details", (req, res) => {
-    db.all("SELECT * FROM service_details", (err, rows) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
+  // ================= Métodos de DELETE ====================
 
-      res.json({ data: rows });
-    });
-  });
-
-  // Servindo PDF como Data URL
-  app.post("/send_email", async (req, res) => {
-    const { to, subject, text, html } = req.body;
-
-    // Convertendo o Data URl de volta para um Buffer
+  // Deletando um cliente
+  app.delete("/clients/:id", async (req, res) => {
+    const clientId = parseInt(req.params.id, 10);
 
     try {
-      const filePath = path.resolve(pathReceived, pdfPath);
-      if (!fs.existsSync(filePath)) {
-        return res.status(404).json({ error: "Arquivo PDF não encontrado." });
+      const { data: serviceNotes, error: serviceNotesError } = await supabase
+        .from("service_notes")
+        .select("id")
+        .eq("client_id", clientId);
+
+      if (serviceNotesError) throw serviceNotesError;
+
+      const serviceNotesIds = serviceNotes.map((note) => note.id);
+
+      // Deletar todos os detalhes de serviço relacionado as notas de serviço do cliente
+      if (serviceNotesIds.length > 0) {
+        const { error: serviceDetailsError } = await supabase
+          .from("service_details")
+          .delete()
+          .in("note_id", serviceNotesIds);
+
+        if (serviceDetailsError) throw serviceDetailsError;
+
+        // Deletar todas as notas de serviço do cliente
+        const { error: serviceNotesDltError } = await supabase
+          .from("service_notes")
+          .delete()
+          .eq("id", serviceNotesIds);
+
+        if (serviceNotesDltError) throw serviceNotesDltError;
       }
 
-      const pdfBuffer = fs.readFileSync(filePath);
+      // Deletar o cliente
+      const { error: clientDltError } = await supabase.from("clients").delete().eq("id", clientId);
 
-      const emailData = {
-        from: "ADM AdFlex <adm.adflex@gmail.com>",
-        to,
-        subject,
-        text,
-        html,
-        attachment: [
-          {
-            filename: "documento-dados-nota-fiscal.pdf",
-            data: pdfBuffer,
-            contentType: "application/pdf",
-          },
-        ],
-      };
-      const response = await mg.messages.create(process.env.MAILGUN_DOMAIN, emailData);
-      res.json(response);
-    } catch (error) {
-      return res.status(500).json({ error: error.message });
+      if (clientDltError) throw clientDltError;
+
+      res.json({ message: "O cliente e suas notas foram deletados com sucesso." });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // Deletar as notas de serviço
+
+  app.delete("/os/:id", async (req, res) => {
+    const noteId = parseInt(req.params.id, 10);
+
+    try {
+      if (noteId) {
+        const { data: serviceDetails, error: detailsError } = await supabase
+          .from("service_details")
+          .select("id")
+          .eq("note_id", noteId);
+
+        if (detailsError) throw detailsError;
+
+        const servicesId = serviceDetails.map((service) => service.id);
+
+        const { error: serviceErrDelete } = await supabase
+          .from("service_details")
+          .delete()
+          .in("id", servicesId);
+
+        if (serviceErrDelete) throw serviceErrDelete;
+
+        const { data: clientIdData, error: noteError } = await supabase
+          .from("service_notes")
+          .select("client_id")
+          .eq("id", noteId);
+
+        if (noteError) throw noteError;
+
+        const clientId = clientIdData.length > 0 ? clientIdData[0].client_id : null;
+
+        const { error: noteErrDelete } = await supabase
+          .from("service_notes")
+          .delete()
+          .eq("id", noteId);
+
+        if (noteErrDelete) throw noteErrDelete;
+
+        if (clientId !== null) {
+          res.json({ clientId });
+        }
+      } else {
+        res.status(404).json({ error: "Nota de serviço não encontrada." });
+      }
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   });
 }
 
-module.exports = serverStart;
+module.exports = initServer;

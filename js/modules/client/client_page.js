@@ -25,6 +25,9 @@ export default class ClientPage {
 
   // escapa carcteres especiais em uma string para suas respectivas entidades HTML
   static escapeHTML(str) {
+    if (str === null) {
+      return "";
+    }
     return str.replace(
       /[&<>"']/g,
       (match) =>
