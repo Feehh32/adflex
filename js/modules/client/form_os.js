@@ -154,6 +154,7 @@ export default class FormOs {
     return this.hiddenMeasure;
   }
 
+  // Método que cria a data da nota de serviço
   static getCurrentDate() {
     const currentDate = new Date();
 
@@ -167,11 +168,12 @@ export default class FormOs {
     return `${day}-${month}-${year}-${hour}-${minutes}-${seconds}`;
   }
 
+  // Método que encontra a última os adicionada
   static findLastOs(notes, clientName) {
     if (notes.length === 0) return null;
 
     const filteredNotes = notes.filter((note) => note.client === clientName);
-    let mostRecentNote = filteredNotes[0];
+    let mostRecentNote = filteredNotes[filteredNotes.length - 1];
 
     if (filteredNotes.length === 0) return null;
     filteredNotes.forEach((note) => {
@@ -183,6 +185,7 @@ export default class FormOs {
     return mostRecentNote;
   }
 
+  // Método que compara as datas da os a ser inserida com a última os retornada
   static ComparingDate(currentDate, lastOsDate) {
     if (lastOsDate) {
       // eslint-disable-next-line no-unused-vars
@@ -196,6 +199,7 @@ export default class FormOs {
     return null;
   }
 
+  // Método que cria o codigo de controle da os
   getOsCode(date, clientName) {
     const lastOs = FormOs.findLastOs(this.os, clientName);
     if (lastOs !== null && date && FormOs.ComparingDate(date, lastOs.date)) {
@@ -216,7 +220,7 @@ export default class FormOs {
       const width = parseFloat(e.target.elements[`width${i}`].value);
       const height = parseFloat(e.target.elements[`height${i}`].value);
 
-      if (serviceName && serviceAmount && width && height) {
+      if (serviceName && serviceAmount && width >= 0 && height >= 0) {
         const serviceObj = {
           serviceName,
           serviceAmount,
