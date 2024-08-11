@@ -2,6 +2,7 @@ import ApiService from "../helpers/api_service.js";
 import eventEmitter from "../helpers/event_emitter.js";
 import monetaryMask from "../helpers/monetaryMask.js";
 import { handleCustomDate } from "../helpers/formatDate.js";
+import confirmModal from "../helpers/confirm_modal.js";
 
 export default class OsPage {
   constructor(os, titleCode, osWrapper, btn, url) {
@@ -162,13 +163,12 @@ export default class OsPage {
 
   // Deleta a ordem de serviço
   async deleteOs() {
-    if (this.os) {
-      // eslint-disable-next-line no-alert
-      const confirmation = window.confirm(
-        "Você tem certeza que deseja deletar essa ordem de serviço? Você não poderá recupera-lá depois."
-      );
+    const userConfirm = await confirmModal(
+      "Você tem certeza que deseja deletar essa ordem de serviço? Você não poderá recupera-lá depois."
+    );
 
-      if (confirmation) {
+    if (this.os) {
+      if (userConfirm) {
         const apiServices = new ApiService(this.url, this.os.id);
         try {
           const response = await apiServices.delete("os");
@@ -178,7 +178,7 @@ export default class OsPage {
             this.btn[1].disabled = "true";
             setTimeout(() => {
               window.location.href = `./client.html?id=${encodeURIComponent(response.clientId)}`;
-            }, 2000);
+            }, 500);
           }
         } catch (err) {
           console.error("Erro ao deletar a os:", err);

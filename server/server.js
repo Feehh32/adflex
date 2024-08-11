@@ -227,7 +227,7 @@ function initServer(electronApp) {
 
       if (serviceNotesError) throw serviceNotesError;
 
-      const serviceNotesIds = serviceNotes.map((note) => note.id);
+      const serviceNotesIds = serviceNotes.map((note) => Number(note.id));
 
       // Deletar todos os detalhes de serviço relacionado as notas de serviço do cliente
       if (serviceNotesIds.length > 0) {
@@ -242,7 +242,7 @@ function initServer(electronApp) {
         const { error: serviceNotesDltError } = await supabase
           .from("service_notes")
           .delete()
-          .eq("id", serviceNotesIds);
+          .in("id", serviceNotesIds);
 
         if (serviceNotesDltError) throw serviceNotesDltError;
       }

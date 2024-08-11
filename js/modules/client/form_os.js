@@ -289,6 +289,16 @@ export default class FormOs {
       FormOs.getCurrentDate();
       this.addEvents();
       this.fillSelect();
+      document.addEventListener("focusin", (e) => {
+        console.log("Element focused:", e.target);
+      });
+      document.addEventListener(
+        "click",
+        (e) => {
+          console.log("Clicked element:", e.target);
+        },
+        true
+      );
     }
     return this;
   }

@@ -1,5 +1,6 @@
 import ApiService from "../helpers/api_service.js";
 import eventEmitter from "../helpers/event_emitter.js";
+import confirmModal from "../helpers/confirm_modal.js";
 
 export default class ClientPage {
   constructor(clientName, infoClientWrapper, btnDelete, clients, url) {
@@ -133,13 +134,12 @@ export default class ClientPage {
   }
 
   // deleta o cliente
-  deleteClient() {
-    // eslint-disable-next-line no-alert, no-restricted-globals
-    const confirmation = window.confirm(
-      `Você tem certeza que deseja excluir ${this.client.name}. Lembre-se que as ordens de serviço também serão excluidas.`
+  async deleteClient() {
+    const userConfirm = await confirmModal(
+      "Você tem certez que deseja deletar esse cliente? Todas as ordens de serviço referentes a este cliente serão deletadas junto."
     );
 
-    if (confirmation) {
+    if (userConfirm) {
       const apiService = new ApiService(this.url, this.client.id);
       apiService.delete("clients");
 
