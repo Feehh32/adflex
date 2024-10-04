@@ -15,7 +15,6 @@ import Navigation from "./modules/global/navigation.js";
 const url = "http://localhost:3000";
 
 const apiServices = new ApiService(url);
-
 const clients = await apiServices.get("clients").then((data) => data.clients);
 const os = await apiServices.get("os").then((data) => data.os);
 
