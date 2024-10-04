@@ -45,26 +45,33 @@ export default class OsPage {
     return showMeasure;
   }
 
+  // Busca as notas de serviço que são específicas para a OS em questão
+
   // Exibe os serviços na ordem de serviço
   async showServiceValues(serviceContainer) {
-    const apiServices = new ApiService(this.url);
-    const service = await apiServices.get("service_details").then((data) => data.data);
-    const filteredService = service.filter((item) => item.note_id === this.os.id);
-
-    const serviceValues = document.querySelector(serviceContainer);
-    serviceValues.innerHTML = "";
-    filteredService.forEach((element) => {
-      const serviceValue = this.os.budgetValue ? "" : monetaryMask(element.serviceValue);
-      const measures = this.handleMeasure(element);
-      serviceValues.innerHTML += `
-          <ul class="content__values font-os-s-b">
-              <li>${element.serviceAmount}</li>
-              <li>${measures}</li>
-              <li>${element.serviceName}</li>
-              <li>${serviceValue}</li>
-          </ul>
-        `;
-    });
+    try {
+      const apiServices = new ApiService(this.url);
+      const service = await apiServices
+        .getWithId("service_details", String(this.os.id))
+        .then((data) => data.data);
+      const filteredService = service.filter((item) => item.note_id === this.os.id);
+      const serviceValues = document.querySelector(serviceContainer);
+      serviceValues.innerHTML = "";
+      filteredService.forEach((element) => {
+        const serviceValue = this.os.budgetValue ? "" : monetaryMask(element.serviceValue);
+        const measures = this.handleMeasure(element);
+        serviceValues.innerHTML += `
+            <ul class="content__values font-os-s-b">
+                <li>${element.serviceAmount}</li>
+                <li>${measures}</li>
+                <li>${element.serviceName}</li>
+                <li>${serviceValue}</li>
+            </ul>
+          `;
+      });
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   // Exibe uma mensagem de erro caso a ordem de serviço não seja deletada

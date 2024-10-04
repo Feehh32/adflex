@@ -44,9 +44,10 @@ function initServer(electronApp) {
   });
 
   // Buscando as informações da nota de serviço no banco de dados
-  app.get("/service_details", async (req, res) => {
+  app.get("/service_details/:id", async (req, res) => {
     try {
-      const { data, error } = await supabase.from("service_details").select("*");
+      const { id } = req.params;
+      const { data, error } = await supabase.from("service_details").select("*").eq("note_id", id);
       if (error) throw error;
       res.json({ data });
     } catch (err) {

@@ -23,6 +23,23 @@ export default class ApiService {
     }
   }
 
+  async getWithId(endpoint, id) {
+    try {
+      let url = `${this.baseUrl}/${endpoint}/${id}`;
+      if (this.optionParams) {
+        url += `/${this.optionParams}`;
+      }
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.statusText}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("Erro ao buscar no servidor:", error);
+      throw error;
+    }
+  }
+
   async post(endpoint, data) {
     try {
       let url = `${this.baseUrl}/${endpoint}`;
