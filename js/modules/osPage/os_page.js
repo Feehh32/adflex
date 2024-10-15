@@ -46,21 +46,31 @@ export default class OsPage {
   }
 
   // Busca as notas de serviço que são específicas para a OS em questão
-
-  // Exibe os serviços na ordem de serviço
-  async showServiceValues(serviceContainer) {
+  async filterService() {
     try {
       const apiServices = new ApiService(this.url);
       const service = await apiServices
         .getWithId("service_details", String(this.os.id))
         .then((data) => data.data);
       const filteredService = service.filter((item) => item.note_id === this.os.id);
-      const serviceValues = document.querySelector(serviceContainer);
-      serviceValues.innerHTML = "";
-      filteredService.forEach((element) => {
-        const serviceValue = this.os.budgetValue ? "" : monetaryMask(element.serviceValue);
-        const measures = this.handleMeasure(element);
-        serviceValues.innerHTML += `
+      filteredService.sort((a, b) => a.order - b.order);
+      return filteredService;
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
+  }
+
+  // Exibe os serviços na ordem de serviço
+  async showServiceValues(serviceContainer) {
+    const serviceValues = document.querySelector(serviceContainer);
+    serviceValues.innerHTML = "";
+    const filteredService = await this.filterService();
+
+    filteredService.forEach((element) => {
+      const serviceValue = this.os.budgetValue ? "" : monetaryMask(element.serviceValue);
+      const measures = this.handleMeasure(element);
+      serviceValues.innerHTML += `
             <ul class="content__values font-os-s-b">
                 <li>${element.serviceAmount}</li>
                 <li>${measures}</li>
@@ -68,10 +78,7 @@ export default class OsPage {
                 <li>${serviceValue}</li>
             </ul>
           `;
-      });
-    } catch (err) {
-      console.error(err);
-    }
+    });
   }
 
   // Exibe uma mensagem de erro caso a ordem de serviço não seja deletada
