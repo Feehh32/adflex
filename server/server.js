@@ -44,12 +44,42 @@ function initServer(electronApp) {
   });
 
   // Buscando as informações da nota de serviço no banco de dados
+  async function columnExists(columnName) {
+    const { data: columns, error } = await supabase
+      .from("information_schema.columns")
+      .select("column_name")
+      .eq("table_name", "service_details")
+      .eq("column_name", columnName);
+
+    if (error) {
+      console.error("Erro ao verificar colunas:", error);
+      return false;
+    }
+
+    return columns.length > 0;
+  }
+
   app.get("/service_details/:id", async (req, res) => {
     try {
       const { id } = req.params;
-      const { data, error } = await supabase.from("service_details").select("*").eq("note_id", id);
+      let query = supabase.from("service_details").select("*").eq("note_id", id);
+
+      if (await columnExists("order")) {
+        query = query.order("order", { ascending: true });
+      } else {
+        query = query.order("id", { ascending: true });
+      }
+
+      const { data: serviceDetails, error } = await query;
+
+      if (error) {
+        console.error("Erro ao buscar detalhes do serviço:", error);
+      } else {
+        console.log("Dados recuperados com sucesso:", serviceDetails);
+      }
+
       if (error) throw error;
-      res.json({ data });
+      res.json({ data: serviceDetails });
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
@@ -146,7 +176,7 @@ function initServer(electronApp) {
       if (newNoteService) {
         const noteId = newNoteService.id;
 
-        const servicePromise = service.map(async (info) => {
+        const servicePromise = service.map(async (info, index) => {
           const result = await supabase
             .from("service_details")
             .insert([
@@ -157,6 +187,7 @@ function initServer(electronApp) {
                 width: info.width,
                 height: info.height,
                 serviceValue: info.serviceValue,
+                order: index,
               },
             ])
             .select();
