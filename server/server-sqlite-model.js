@@ -63,9 +63,9 @@ function serverStart(electronApp) {
       db.run(
         "INSERT INTO clients (name, email1, email2, tel1, tel2, charge) VALUES (?,?,?,?,?,?)",
         [name, email1, email2, tel1, tel2, charge],
-        function (err) {
-          if (err) {
-            return next(err);
+        function (error) {
+          if (error) {
+            return next(error);
           }
           res.json({ id: this.lastID });
         }

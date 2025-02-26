@@ -48,7 +48,7 @@ export default class MonthSales {
   static turningMonthInNumber(monthName) {
     const monthObj = {
       janeiro: "01",
-      fevereiro: " 02",
+      fevereiro: "02",
       março: "03",
       abril: "04",
       maio: "05",
@@ -64,7 +64,7 @@ export default class MonthSales {
     return monthObj[monthName.toLowerCase()] || null;
   }
 
-  // Filtra a os baseado nos dos do formulário preenchido
+  // Filtra a os baseado nos dados do formulário preenchido
   // buscando eles no localStorage
   filterOs() {
     const lsData = localStorage.getItem("formData");
@@ -72,7 +72,7 @@ export default class MonthSales {
       this.dataForm = JSON.parse(lsData);
     }
     this.filteredOs = this.os.filter((item) => {
-      const [, cMonth, cYear] = item.date.split("-");
+      const [cMonth, cYear] = item.date.split("-");
       const monthNumber = MonthSales.turningMonthInNumber(this.dataForm.monthSale.toLowerCase());
       if (monthNumber) {
         return (
@@ -124,7 +124,6 @@ export default class MonthSales {
 
   // Calcura o total das vendas do mês
   calculateTotal() {
-    console.log(this.filteredOs);
     if (this.filteredOs.length) {
       this.total = 0;
       this.filteredOs.forEach((os) => {
