@@ -1,0 +1,34 @@
+.sales__wrapper h2,
+.sales__wrapper h4 {
+  display: flex;
+  flex-direction: column;
+}
+
+.sales__wrapper h2::after,
+.sales__wrapper h4::after {
+  content: "";
+  height: 1px;
+  background-color: var(--color-9);
+  width: 100%;
+  margin-top: 20px;
+}
+
+.sales__wrapper h4 {
+  margin-top: 60px;
+}
+
+.sales__more-less--info {
+  background-color: var(--color-11);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 32px;
+  margin-top: 20px;
+  border-radius: 4px;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+}
+
+.more-less-style {
+  display: flex;
+  gap: 8px;
+}

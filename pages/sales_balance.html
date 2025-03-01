@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:3000">
+  <title>AD flex | Balanço de Vendas </title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Poppins:wght@500;600&family=Roboto:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+
+  <script>
+    document.documentElement.classList.add('js')
+  </script>
+</head>
+
+<body>
+  <div class="grid">
+    <header class="header fadeInLeft" data-anime="100" data-menu="list">
+      <span class="header__logo-wrapper main-menu-padding">
+        <button type="button" class="burguer-menu" aria-expanded="false" aria-controls="main-menu"
+          data-btn-menu></button>
+        <a href="./index.html" class="header__logo">
+          <img src=" ../img/logo-colorida.svg" width="128" height="33" alt="Ad Flex">
+        </a>
+      </span>
+      <nav aria-label="primaria">
+        <ul class="header__menu font-p-m color-0 main-menu-padding">
+          <li>
+            <img src="../img/icones/inicio.svg" width="24" height="24" alt="icone de início">
+            <a href=index.html>Início</a>
+          </li>
+          <li>
+            <img src="../img/icones/os-icon.svg" width="24" height="24" alt="icone de uma ordem de serviço">
+            <a href="./form_os.html">Gerar Nova O.S</a>
+          </li>
+        </ul>
+        <ul class="header__menu-secondary main-menu-padding font-p-m">
+          <li>
+            <a href="./form_client.html" class="font-p-xs">
+              <img src="../img/icones/plus-icon.svg" width="20" height="20" alt="icone de um sinal de soma">
+              adicionar novo cliente
+            </a>
+          </li>
+          <li>
+            <a href="./month_sales.html" class="font-p-xs">
+              <img src="../img/icones/fechamento-icon.svg" width="20" height="20" alt="icone com um nota de fechamento">
+              Fazer fechamento do mês
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <div class="page__navigation">
+        <button type="button" class="page__navigation-prev font-r-s color-5">
+          <svg width="26" height="19" viewBox="0 0 26 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M25 9L15.4 1M25 9L15.4 17.5333M25 9H1" stroke="#88848f" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg> Voltar</button>
+        <button type="button" class="page__navigation-next font-r-s color-5">Avançar <svg width="26" height="19"
+            viewBox="0 0 26 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M25 9L15.4 1M25 9L15.4 17.5333M25 9H1" stroke="#88848f" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg></button>
+      </div>
+      <span class="main__credits-container main-menu-padding font-r-xs">
+        <p>Desenvolvido por Fernando Pereira - Alguns direitos reservados. - 2024</p>
+      </span>
+    </header>
+    <main class="main__sales">
+      <span class="header__logo-wrapper main-menu-padding logo-outside-menu">
+        <button type="button" class="burguer-menu" aria-expanded="false" aria-controls="main-menu"
+          data-btn-menu></button>
+        <a href="./index.html" class="header__logo">
+          <img src=" ../img/logo-colorida.svg" width="128" height="33" alt="Ad Flex">
+        </a>
+      </span>
+      <h1 class="font-p-xl-b color-0 main__title fadeInDown" data-anime="300">
+        Balanço de Vendas<span class="color-prim2">.</span>
+      </h1>
+      <section class="sales__wrapper">
+        <h2 class="font-os-xl-b color-0" data-anime="300">Ver balanço de vendas do mês de Fevereiro</h2>
+        <article class="sales_report-container">
+          <h3 class="font-os-xl-b color-13">Balando do mês de Fevereiro</h3>
+          <ul class="sales__report-item font-os-m-b color-13">
+            <li>Master</li>
+            <li>Fevereiro de 2025</li>
+            <li>R$ 2.200,00</li>
+          </ul>
+          <ul class="sales__report-item font-os-m-b color-13">
+            <li>Kagipel</li>
+            <li>Fevereiro de 2025</li>
+            <li>R$ 2.200,00</li>
+          </ul>
+          <div class="sales__report-total color-13 font-os-xl-b">
+            <p>Total:</p>
+            <p>R$ 4,400</p>
+          </div>
+        </article>
+        <div class="sales__more-less fadeInUp" data-anime="300">
+          <h4 class="font-os-l-b color-0">Mais e menos vendidos</h4>
+          <div class="sales__more-less--info">
+            <span class="more more-less-style">
+              <p class="font-os-m-b color-0">Master - </p>
+              <span class="font-os-m-b main-green-s">R$ 2.200,00</span>
+            </span>
+            <span class="less more-less-style">
+              <p class="font-os-m-b color-0">Kagipel - </p>
+              <span class="font-os-m-b delete-red">R$ 1.200,00</span>
+            </span>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="../js/plugin/simple-anime.js"></script>
+  <script src="../main.js" type="module"></script>
+</body>
+
+</html>

@@ -24,3 +24,6 @@
 
 /* Month sales */
 @import "./month_sales/month_sales.css";
+
+/* Sales balance */
+@import "./sales_balance/sales_balance.css";

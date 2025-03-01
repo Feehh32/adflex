@@ -72,6 +72,7 @@ export default class MonthSales {
       this.dataForm = JSON.parse(lsData);
     }
     this.filteredOs = this.os.filter((item) => {
+      // eslint-disable-next-line no-unused-vars
       const [cday, cMonth, cYear] = item.date.split("-");
       const monthNumber = MonthSales.turningMonthInNumber(this.dataForm.monthSale.toLowerCase());
       if (monthNumber) {
