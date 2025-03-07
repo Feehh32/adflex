@@ -56,6 +56,8 @@ async function columnExists(columnName) {
   return columns.length > 0;
 }
 
+// Buscando informações da nota de serviço pelo id no banco de dados
+
 app.get("/service_details/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -77,6 +79,22 @@ app.get("/service_details/:id", async (req, res) => {
 
     if (error) throw error;
     res.json({ data: serviceDetails });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Buscando todas as os e os serviços por um determinado mês e ano no banco de dados
+app.get("/os/:date", async (req, res) => {
+  try {
+    const { date } = req.params;
+    const { data, error } = await supabase
+      .from("service_notes")
+      .select("*")
+      .like("date", `%-${date}-%`);
+
+    if (error) throw error;
+    res.json({ os: data });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

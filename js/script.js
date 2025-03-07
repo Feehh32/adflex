@@ -7,6 +7,7 @@ import FormClient from "./modules/client/form_client.js";
 import FormOs from "./modules/client/form_os.js";
 import OsPage from "./modules/osPage/os_page.js";
 import MonthSales from "./modules/month_sales/month_sales.js";
+import SalesBalance from "./modules/sales_balance/sales_balance.js";
 
 // requisições fetch
 import ApiService from "./modules/helpers/api_service.js";
@@ -86,3 +87,13 @@ monthSales.init();
 
 const navigation = new Navigation(".page__navigation-prev", ".page__navigation-next");
 navigation.init();
+
+const salesBalance = new SalesBalance(
+  url,
+  clients,
+  "[data-sales-balance]",
+  ".balance-title",
+  ".sales__more-less"
+);
+
+salesBalance.init();

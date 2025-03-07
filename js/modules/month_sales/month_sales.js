@@ -134,7 +134,7 @@ export default class MonthSales {
     }
   }
 
-  // Renderiza a seção que exiba as vendas do mês e o total vendido
+  // Renderiza a seção que exibe as vendas do mês e o total vendido
   renderingMonthSales() {
     const salesTitle = document.querySelector("[data-sale-title]");
     this.article.innerHTML = "";

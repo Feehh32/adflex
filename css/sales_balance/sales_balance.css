@@ -17,6 +17,19 @@
   margin-top: 60px;
 }
 
+.sales__report-style {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.sales__report-style li:last-child {
+  justify-self: end;
+}
+
+.sales__report-style li:nth-child(2) {
+  justify-self: center;
+}
+
 .sales__more-less--info {
   background-color: var(--color-11);
   display: flex;

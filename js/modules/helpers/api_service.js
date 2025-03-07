@@ -14,7 +14,7 @@ export default class ApiService {
       }
       const response = await fetch(url);
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.statusText}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
       return await response.json();
     } catch (error) {
@@ -31,7 +31,24 @@ export default class ApiService {
       }
       const response = await fetch(url);
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.statusText}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("Erro ao buscar no servidor:", error);
+      throw error;
+    }
+  }
+
+  async getByMonth(endpoint, date) {
+    try {
+      let url = `${this.baseUrl}/${endpoint}/${date}`;
+      if (this.optionParams) {
+        url += `/${this.optionParams}`;
+      }
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
       return await response.json();
     } catch (error) {
@@ -115,7 +132,7 @@ export default class ApiService {
       });
       if (!response.ok) {
         eventEmitter.emit("failedMsg");
-        throw new Error(`HTTP error! status: ${response.statusText}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       } else {
         eventEmitter.emit("sucessMsg");
         return await response.json();
