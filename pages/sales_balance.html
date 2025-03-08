@@ -31,7 +31,7 @@
         </a>
       </span>
       <nav aria-label="primaria">
-        <ul class="header__menu font-p-m color-0 main-menu-padding">
+        <ul class="header__menu main-menu-padding">
           <li>
             <img src="../img/icones/inicio.svg" width="24" height="24" alt="icone de início">
             <a href=index.html>Início</a>
@@ -41,17 +41,23 @@
             <a href="./form_os.html">Gerar Nova O.S</a>
           </li>
         </ul>
-        <ul class="header__menu-secondary main-menu-padding font-p-m">
+        <ul class="header__menu-secondary main-menu-padding ">
           <li>
-            <a href="./form_client.html" class="font-p-xs">
-              <img src="../img/icones/plus-icon.svg" width="20" height="20" alt="icone de um sinal de soma">
-              adicionar novo cliente
+            <a href="./form_client.html">
+              <img src=" ../img/icones/plus-icon.svg" width="20" height="20" alt="icone de um sinal de soma">
+              Novo Cliente
             </a>
           </li>
           <li>
-            <a href="./month_sales.html" class="font-p-xs">
-              <img src="../img/icones/fechamento-icon.svg" width="20" height="20" alt="icone com um nota de fechamento">
-              Fazer fechamento do mês
+            <a href="./month_sales.html">
+              <img src="../img/icones/os-icon.svg" width="20" height="20" alt="icone com um nota de fechamento">
+              Fechamento do Mês
+            </a>
+          </li>
+          <li>
+            <a href="./sales_balance.html">
+              <img src="../img/icones/balance.svg" width="20" height="20" alt="icone com um nota de fechamento">
+              Balanço Mensal
             </a>
           </li>
         </ul>
@@ -72,7 +78,7 @@
         <p>Desenvolvido por Fernando Pereira - Alguns direitos reservados. - 2024</p>
       </span>
     </header>
-    <main class="main__sales">
+    <main class="main__sales main__balance">
       <span class="header__logo-wrapper main-menu-padding logo-outside-menu">
         <button type="button" class="burguer-menu" aria-expanded="false" aria-controls="main-menu"
           data-btn-menu></button>
@@ -83,8 +89,36 @@
       <h1 class="font-p-xl-b color-0 main__title fadeInDown" data-anime="300">
         Balanço de Vendas<span class="color-prim2">.</span>
       </h1>
-      <section class="sales__wrapper" data-sales-balance>
-        <h2 class="font-os-xl-b color-0 balance-title" data-anime="300"></h2>
+      <section class="input__balance fadeInDown" data-anime="300" data-input-balance>
+        <div>
+          <label class="font-p-s-b color-0" for="monthBalance">Selecione o Mês</label>
+          <select class="input-pattern" name="monthBalance" id="monthBalance" data-balance required>
+            <option disabled selected> -- Selecione o Mês -- </option>
+            <option value="Janeiro">Janeiro</option>
+            <option value="Fevereiro">Fevereiro</option>
+            <option value="Março">Março</option>
+            <option value="Abril">Abril</option>
+            <option value="Maio">Maio</option>
+            <option value="Junho">Junho</option>
+            <option value="Julho">Julho</option>
+            <option value="Agosto">Agosto</option>
+            <option value="Setembro">Setembro</option>
+            <option value="Outubro">Outubro</option>
+            <option value="Novembro">Novembro</option>
+            <option value="Dezembro">Dezembro</option>
+          </select>
+          <span class="msgError"></span>
+        </div>
+        <div>
+          <label class="font-p-s-b color-0" for="yearBalance">Digite o ano</label>
+          <input class="input-pattern" type="number" id="yearBalance" name="yearBalance" placeholder="Digite o ano"
+            required data-balance>
+          <span class="msgError"></span>
+        </div>
+        <button class="adicionar font-r-l-b color-12" data-balance>Calcular</button>
+      </section>
+      <section class="sales__wrapper fadeInUp" data-anime="300" data-sales-balance>
+        <h2 class="font-os-xl-b color-0 balance-title fadeInUp" data-anime="300"></h2>
         <div class="sales__more-less fadeInUp" data-anime="300">
           <h4 class="font-os-l-b color-0">Mais e menos vendidos</h4>
           <div class="sales__more-less--info">

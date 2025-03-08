@@ -93,7 +93,8 @@ const salesBalance = new SalesBalance(
   clients,
   "[data-sales-balance]",
   ".balance-title",
-  ".sales__more-less"
+  ".sales__more-less",
+  "[data-balance]"
 );
 
 salesBalance.init();

@@ -1,15 +1,30 @@
 import ApiService from "../helpers/api_service.js";
 import monetaryMask from "../helpers/monetaryMask.js";
+import { turningMonthInNumber } from "../helpers/formatDate.js";
+import { fieldValidation } from "../client/form_validations";
 
 export default class SalesBalance {
-  constructor(url, clients, salesWrapper, balanceTitle, moreLessWrapper) {
+  constructor(url, clients, salesWrapper, balanceTitle, moreLessWrapper, inputList) {
     this.clients = clients;
     this.salesWrapper = document.querySelector(salesWrapper);
     this.url = url;
     this.moreLessWrapper = document.querySelector(moreLessWrapper);
+    this.inputList = document.querySelectorAll(inputList);
 
     this.balanceTitle = document.querySelector(balanceTitle);
     this.article = document.createElement("article");
+
+    this.renderingSalesBalance = this.renderingSalesBalance.bind(this);
+
+    this.errsType = ["valueMissing"];
+    this.errsMsg = {
+      monthBalance: {
+        valueMissing: "O campo de mês não pode estar vazio.",
+      },
+      yearBalance: {
+        valueMissing: "O campo de ano não pode estar vazio.",
+      },
+    };
   }
 
   // Métodos de auxílio
@@ -17,14 +32,15 @@ export default class SalesBalance {
   // Busca as notas de serviço no bando de dados baseado em um determinado mês e ano
   async searchOsByDate() {
     const apiService = new ApiService(this.url);
-    const date = new Date();
     // const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    // Lembrar de colocar month ao inves de 02
-    const monthYear = `02-${year}`;
+    const monthYear = this.handleInputInfo();
 
-    const { os } = await apiService.getByMonth("os", monthYear);
-    return os;
+    if (monthYear) {
+      const { os } = await apiService.getByMonth("os", monthYear);
+      return os;
+    }
+
+    return [];
   }
 
   // Se o array de serviço estiver vazio renderiza uma msg
@@ -35,10 +51,7 @@ export default class SalesBalance {
 
   // Se houver itens dentro do array de serviços renderiza os clientes e o total de suas vendas
   ifSalesArrayFull(month, os, date) {
-    const innerTitle = `<h3 class="font-os-xl-b color-13">Balando do mês de ${month}</h3>`;
-    this.article.innerHTML = innerTitle;
     let total = 0;
-
     this.clients.forEach((client) => {
       for (let i = 0; i < os.length; i++) {
         if (client.id === os[i].client_id) {
@@ -73,6 +86,15 @@ export default class SalesBalance {
     return total;
   }
 
+  handleInputInfo() {
+    if (this.inputList.length <= 0) {
+      return [];
+    }
+    const month = turningMonthInNumber(this.inputList[0].value);
+    const year = this.inputList[1].value;
+    return `${month}-${year}`;
+  }
+
   // Métodos de execução
 
   // Renderiza na tela a exibição dos dados
@@ -82,17 +104,20 @@ export default class SalesBalance {
 
     const date = new Date();
     const month = new Intl.DateTimeFormat("pt-BR", { month: "long" }).format(date);
-    this.balanceTitle.innerHTML = `Ver balanço de vendas do mês ${month}`;
 
     if (os.length <= 0) {
       this.ifSalesArrayEmpty();
     } else {
+      this.balanceTitle.innerHTML = `Ver balanço de vendas do mês ${month}`;
+      this.article.innerHTML = "";
       this.ifSalesArrayFull(month, os, date);
+      this.handleSalesMoreLess(os);
+      this.salesWrapper.insertBefore(this.article, this.moreLessWrapper);
     }
-    this.handleSalesMoreLess(os);
-    this.salesWrapper.insertBefore(this.article, this.moreLessWrapper);
   }
 
+  // Lida com o calculo e com a exibição do cliente que menos vendo e
+  // do cliente que mais vendeu
   handleSalesMoreLess(os) {
     const valuesArray = [];
     this.clients.forEach((client) => {
@@ -105,6 +130,7 @@ export default class SalesBalance {
         }
       }
     });
+
     const biggerValue = valuesArray.reduce((acc, val) => (val.value > acc.value ? val : acc));
     const minorValue = valuesArray.reduce((acc, val) => (val.value < acc.value ? val : acc));
 
@@ -112,10 +138,31 @@ export default class SalesBalance {
     this.moreLessWrapper.querySelector(".bigger-value").innerHTML = monetaryMask(biggerValue.value);
     this.moreLessWrapper.querySelector(".minor-name").innerHTML = `${minorValue.name} - `;
     this.moreLessWrapper.querySelector(".minor-value").innerHTML = monetaryMask(minorValue.value);
+
+    this.moreLessWrapper.style.display = "block";
+  }
+
+  handleEvents() {
+    if (this.inputList.length > 0) {
+      this.inputList[2].addEventListener("click", this.renderingSalesBalance);
+      this.inputList[1].addEventListener("keydown", (e) => {
+        if (e.key === "Enter") this.renderingSalesBalance();
+      });
+    }
+
+    this.inputList[0].addEventListener("blur", (e) => {
+      fieldValidation(e.target, this.errsMsg, this.errsType, ".msgError");
+    });
+
+    this.inputList[1].addEventListener("blur", (e) => {
+      fieldValidation(e.target, this.errsMsg, this.errsType, ".msgError");
+    });
   }
 
   init() {
-    this.renderingSalesBalance();
+    if (document.querySelector(".main__balance")) {
+      this.handleEvents();
+    }
     return this;
   }
 }

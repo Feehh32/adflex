@@ -55,8 +55,11 @@
   border-bottom: 1px solid var(--color-9);
 }
 
+.header__menu-secondary li + li {
+  margin-top: 20px;
+}
+
 .header__menu-secondary a {
-  padding: 8px 16px;
   display: flex;
   gap: 10px;
   align-items: center;
@@ -65,17 +68,8 @@
   transition: 0.3s;
 }
 
-.header__menu-secondary li:first-child a {
-  background: var(--linear-blue);
-  margin-bottom: 20px;
-}
-
-.header__menu-secondary li:last-child a {
-  background: var(--linear-green);
-}
-
 .header__menu-secondary a:hover {
-  transform: scale(1.05);
+  color: var(--color-prim1);
 }
 
 .main__credits-container {

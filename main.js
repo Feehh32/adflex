@@ -1557,7 +1557,8 @@ var EventEmitter = /*#__PURE__*/function () {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   handleCustomDate: () => (/* binding */ handleCustomDate),
-/* harmony export */   parseDate: () => (/* binding */ parseDate)
+/* harmony export */   parseDate: () => (/* binding */ parseDate),
+/* harmony export */   turningMonthInNumber: () => (/* binding */ turningMonthInNumber)
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/esm/slicedToArray.js");
 
@@ -1590,6 +1591,25 @@ function handleCustomDate(date) {
   };
   var customDate = dateObj.toLocaleDateString("pt-BR", options);
   return customDate;
+}
+
+// transformando o mês escrito em nome para escrito como numero
+function turningMonthInNumber(monthName) {
+  var monthObj = {
+    janeiro: "01",
+    fevereiro: "02",
+    março: "03",
+    abril: "04",
+    maio: "05",
+    junho: "06",
+    julho: "07",
+    agosto: "08",
+    setembro: "09",
+    outubro: "10",
+    novembro: "11",
+    dezembro: "12"
+  };
+  return monthObj[monthName.toLowerCase()] || null;
 }
 
 /***/ }),
@@ -2002,13 +2022,11 @@ var MonthSales = /*#__PURE__*/function () {
       });
     }
 
-    // transformando o mês escrito em nome para escrito como numero
-  }, {
-    key: "filterOs",
-    value:
     // Filtra a os baseado nos dados do formulário preenchido
     // buscando eles no localStorage
-    function filterOs() {
+  }, {
+    key: "filterOs",
+    value: function filterOs() {
       var _this = this;
       var lsData = localStorage.getItem("formData");
       if (lsData) {
@@ -2021,7 +2039,7 @@ var MonthSales = /*#__PURE__*/function () {
           cday = _item$date$split2[0],
           cMonth = _item$date$split2[1],
           cYear = _item$date$split2[2];
-        var monthNumber = MonthSales.turningMonthInNumber(_this.dataForm.monthSale.toLowerCase());
+        var monthNumber = (0,_helpers_formatDate_js__WEBPACK_IMPORTED_MODULE_5__.turningMonthInNumber)(_this.dataForm.monthSale.toLowerCase());
         if (monthNumber) {
           return item.client === _this.dataForm.clientSale && cMonth === monthNumber && cYear === _this.dataForm.yearSale;
         }
@@ -2115,25 +2133,6 @@ var MonthSales = /*#__PURE__*/function () {
       return this;
     }
   }], [{
-    key: "turningMonthInNumber",
-    value: function turningMonthInNumber(monthName) {
-      var monthObj = {
-        janeiro: "01",
-        fevereiro: "02",
-        março: "03",
-        abril: "04",
-        maio: "05",
-        junho: "06",
-        julho: "07",
-        agosto: "08",
-        setembro: "09",
-        outubro: "10",
-        novembro: "11",
-        dezembro: "12"
-      };
-      return monthObj[monthName.toLowerCase()] || null;
-    }
-  }, {
     key: "ifWrongDate",
     value: function ifWrongDate() {
       var contentScreen = "   \n      <p class=\"font-os-s color-13\">Nenhuma venda foi registrada neste m\xEAs para o cliente selecionado,\n        verifique os dados que foram inseridos no formul\xE1rio acima e tente novamente.\n    </p>";
@@ -2497,6 +2496,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _helpers_api_service_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../helpers/api_service.js */ "./js/modules/helpers/api_service.js");
 /* harmony import */ var _helpers_monetaryMask_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../helpers/monetaryMask.js */ "./js/modules/helpers/monetaryMask.js");
+/* harmony import */ var _helpers_formatDate_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../helpers/formatDate.js */ "./js/modules/helpers/formatDate.js");
+/* harmony import */ var _client_form_validations__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../client/form_validations */ "./js/modules/client/form_validations.js");
+
+
 
 
 
@@ -2504,14 +2507,25 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var SalesBalance = /*#__PURE__*/function () {
-  function SalesBalance(url, clients, salesWrapper, balanceTitle, moreLessWrapper) {
+  function SalesBalance(url, clients, salesWrapper, balanceTitle, moreLessWrapper, inputList) {
     (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__["default"])(this, SalesBalance);
     this.clients = clients;
     this.salesWrapper = document.querySelector(salesWrapper);
     this.url = url;
     this.moreLessWrapper = document.querySelector(moreLessWrapper);
+    this.inputList = document.querySelectorAll(inputList);
     this.balanceTitle = document.querySelector(balanceTitle);
     this.article = document.createElement("article");
+    this.renderingSalesBalance = this.renderingSalesBalance.bind(this);
+    this.errsType = ["valueMissing"];
+    this.errsMsg = {
+      monthBalance: {
+        valueMissing: "O campo de mês não pode estar vazio."
+      },
+      yearBalance: {
+        valueMissing: "O campo de ano não pode estar vazio."
+      }
+    };
   }
 
   // Métodos de auxílio
@@ -2521,20 +2535,24 @@ var SalesBalance = /*#__PURE__*/function () {
     key: "searchOsByDate",
     value: function () {
       var _searchOsByDate = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_0__["default"])( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default().mark(function _callee() {
-        var apiService, date, year, monthYear, _yield$apiService$get, os;
+        var apiService, monthYear, _yield$apiService$get, os;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
-              apiService = new _helpers_api_service_js__WEBPACK_IMPORTED_MODULE_4__["default"](this.url);
-              date = new Date(); // const month = String(date.getMonth() + 1).padStart(2, "0");
-              year = date.getFullYear(); // Lembrar de colocar month ao inves de 02
-              monthYear = "02-".concat(year);
-              _context.next = 6;
+              apiService = new _helpers_api_service_js__WEBPACK_IMPORTED_MODULE_4__["default"](this.url); // const month = String(date.getMonth() + 1).padStart(2, "0");
+              monthYear = this.handleInputInfo();
+              if (!monthYear) {
+                _context.next = 8;
+                break;
+              }
+              _context.next = 5;
               return apiService.getByMonth("os", monthYear);
-            case 6:
+            case 5:
               _yield$apiService$get = _context.sent;
               os = _yield$apiService$get.os;
               return _context.abrupt("return", os);
+            case 8:
+              return _context.abrupt("return", []);
             case 9:
             case "end":
               return _context.stop();
@@ -2558,8 +2576,6 @@ var SalesBalance = /*#__PURE__*/function () {
     key: "ifSalesArrayFull",
     value: function ifSalesArrayFull(month, os, date) {
       var _this = this;
-      var innerTitle = "<h3 class=\"font-os-xl-b color-13\">Balando do m\xEAs de ".concat(month, "</h3>");
-      this.article.innerHTML = innerTitle;
       var total = 0;
       this.clients.forEach(function (client) {
         for (var i = 0; i < os.length; i++) {
@@ -2578,10 +2594,22 @@ var SalesBalance = /*#__PURE__*/function () {
       this.article.innerHTML += "<div class=\"sales__report-total color-13 font-os-xl-b\">\n                                <p>Total:</p>\n                                <p>".concat((0,_helpers_monetaryMask_js__WEBPACK_IMPORTED_MODULE_5__["default"])(total), "</p>\n                                </div>");
     }
   }, {
-    key: "renderingSalesBalance",
-    value: // Métodos de execução
+    key: "handleInputInfo",
+    value: function handleInputInfo() {
+      if (this.inputList.length <= 0) {
+        return [];
+      }
+      var month = (0,_helpers_formatDate_js__WEBPACK_IMPORTED_MODULE_6__.turningMonthInNumber)(this.inputList[0].value);
+      var year = this.inputList[1].value;
+      return "".concat(month, "-").concat(year);
+    }
+
+    // Métodos de execução
+
     // Renderiza na tela a exibição dos dados
-    function () {
+  }, {
+    key: "renderingSalesBalance",
+    value: function () {
       var _renderingSalesBalance = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_0__["default"])( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default().mark(function _callee2() {
         var os, date, month;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default().wrap(function _callee2$(_context2) {
@@ -2596,15 +2624,16 @@ var SalesBalance = /*#__PURE__*/function () {
               month = new Intl.DateTimeFormat("pt-BR", {
                 month: "long"
               }).format(date);
-              this.balanceTitle.innerHTML = "Ver balan\xE7o de vendas do m\xEAs ".concat(month);
               if (os.length <= 0) {
                 this.ifSalesArrayEmpty();
               } else {
+                this.balanceTitle.innerHTML = "Ver balan\xE7o de vendas do m\xEAs ".concat(month);
+                this.article.innerHTML = "";
                 this.ifSalesArrayFull(month, os, date);
+                this.handleSalesMoreLess(os);
+                this.salesWrapper.insertBefore(this.article, this.moreLessWrapper);
               }
-              this.handleSalesMoreLess(os);
-              this.salesWrapper.insertBefore(this.article, this.moreLessWrapper);
-            case 10:
+            case 7:
             case "end":
               return _context2.stop();
           }
@@ -2614,7 +2643,8 @@ var SalesBalance = /*#__PURE__*/function () {
         return _renderingSalesBalance.apply(this, arguments);
       }
       return renderingSalesBalance;
-    }()
+    }() // Lida com o calculo e com a exibição do cliente que menos vendo e
+    // do cliente que mais vendeu
   }, {
     key: "handleSalesMoreLess",
     value: function handleSalesMoreLess(os) {
@@ -2639,11 +2669,31 @@ var SalesBalance = /*#__PURE__*/function () {
       this.moreLessWrapper.querySelector(".bigger-value").innerHTML = (0,_helpers_monetaryMask_js__WEBPACK_IMPORTED_MODULE_5__["default"])(biggerValue.value);
       this.moreLessWrapper.querySelector(".minor-name").innerHTML = "".concat(minorValue.name, " - ");
       this.moreLessWrapper.querySelector(".minor-value").innerHTML = (0,_helpers_monetaryMask_js__WEBPACK_IMPORTED_MODULE_5__["default"])(minorValue.value);
+      this.moreLessWrapper.style.display = "block";
+    }
+  }, {
+    key: "handleEvents",
+    value: function handleEvents() {
+      var _this2 = this;
+      if (this.inputList.length > 0) {
+        this.inputList[2].addEventListener("click", this.renderingSalesBalance);
+        this.inputList[1].addEventListener("keydown", function (e) {
+          if (e.key === "Enter") _this2.renderingSalesBalance();
+        });
+      }
+      this.inputList[0].addEventListener("blur", function (e) {
+        (0,_client_form_validations__WEBPACK_IMPORTED_MODULE_7__.fieldValidation)(e.target, _this2.errsMsg, _this2.errsType, ".msgError");
+      });
+      this.inputList[1].addEventListener("blur", function (e) {
+        (0,_client_form_validations__WEBPACK_IMPORTED_MODULE_7__.fieldValidation)(e.target, _this2.errsMsg, _this2.errsType, ".msgError");
+      });
     }
   }, {
     key: "init",
     value: function init() {
-      this.renderingSalesBalance();
+      if (document.querySelector(".main__balance")) {
+        this.handleEvents();
+      }
       return this;
     }
   }], [{
@@ -2734,7 +2784,7 @@ var monthSales = new _modules_month_sales_month_sales_js__WEBPACK_IMPORTED_MODUL
 monthSales.init();
 var navigation = new _modules_global_navigation_js__WEBPACK_IMPORTED_MODULE_11__["default"](".page__navigation-prev", ".page__navigation-next");
 navigation.init();
-var salesBalance = new _modules_sales_balance_sales_balance_js__WEBPACK_IMPORTED_MODULE_9__["default"](url, clients, "[data-sales-balance]", ".balance-title", ".sales__more-less");
+var salesBalance = new _modules_sales_balance_sales_balance_js__WEBPACK_IMPORTED_MODULE_9__["default"](url, clients, "[data-sales-balance]", ".balance-title", ".sales__more-less", "[data-balance]");
 salesBalance.init();
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } }, 1);
