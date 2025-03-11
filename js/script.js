@@ -90,11 +90,10 @@ navigation.init();
 
 const salesBalance = new SalesBalance(
   url,
-  clients,
   "[data-sales-balance]",
-  ".balance-title",
   ".sales__more-less",
-  "[data-balance]"
+  "[data-balance]",
+  ".balance-title"
 );
 
 salesBalance.init();

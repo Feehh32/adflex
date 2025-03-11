@@ -2507,11 +2507,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var SalesBalance = /*#__PURE__*/function () {
-  function SalesBalance(url, clients, salesWrapper, balanceTitle, moreLessWrapper, inputList) {
+  function SalesBalance(url, salesWrapper, moreLessWrapper, inputList, balanceTitle) {
     (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__["default"])(this, SalesBalance);
-    this.clients = clients;
-    this.salesWrapper = document.querySelector(salesWrapper);
     this.url = url;
+    this.salesWrapper = document.querySelector(salesWrapper);
     this.moreLessWrapper = document.querySelector(moreLessWrapper);
     this.inputList = document.querySelectorAll(inputList);
     this.balanceTitle = document.querySelector(balanceTitle);
@@ -2535,25 +2534,26 @@ var SalesBalance = /*#__PURE__*/function () {
     key: "searchOsByDate",
     value: function () {
       var _searchOsByDate = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_0__["default"])( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default().mark(function _callee() {
-        var apiService, monthYear, _yield$apiService$get, os;
+        var apiService, date, monthYear, _yield$apiService$get, os;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
-              apiService = new _helpers_api_service_js__WEBPACK_IMPORTED_MODULE_4__["default"](this.url); // const month = String(date.getMonth() + 1).padStart(2, "0");
-              monthYear = this.handleInputInfo();
-              if (!monthYear) {
-                _context.next = 8;
+              apiService = new _helpers_api_service_js__WEBPACK_IMPORTED_MODULE_4__["default"](this.url);
+              date = this.handleInputInfo();
+              if (!date) {
+                _context.next = 9;
                 break;
               }
-              _context.next = 5;
+              monthYear = "".concat((0,_helpers_formatDate_js__WEBPACK_IMPORTED_MODULE_6__.turningMonthInNumber)(date.month), "-").concat(date.year);
+              _context.next = 6;
               return apiService.getByMonth("os", monthYear);
-            case 5:
+            case 6:
               _yield$apiService$get = _context.sent;
               os = _yield$apiService$get.os;
               return _context.abrupt("return", os);
-            case 8:
-              return _context.abrupt("return", []);
             case 9:
+              return _context.abrupt("return", []);
+            case 10:
             case "end":
               return _context.stop();
           }
@@ -2574,22 +2574,16 @@ var SalesBalance = /*#__PURE__*/function () {
     // Se houver itens dentro do array de serviços renderiza os clientes e o total de suas vendas
   }, {
     key: "ifSalesArrayFull",
-    value: function ifSalesArrayFull(month, os, date) {
+    value: function ifSalesArrayFull(os, date) {
       var _this = this;
       var total = 0;
-      this.clients.forEach(function (client) {
-        for (var i = 0; i < os.length; i++) {
-          if (client.id === os[i].client_id) {
-            var clientTotalValue = SalesBalance.calculateTotal(client.id, os);
-            var ul = document.createElement("ul");
-            ul.classList.add("sales__report-item");
-            ul.classList.add("sales__report-style");
-            ul.innerHTML = " <li class=\"font-os-m-b color-13\">".concat(client.name, "</li>\n            <li class=\"font-os-m-b color-13\">").concat(month, " de ").concat(date.getFullYear(), "</li>\n            <li class=\"font-os-m-b color-13\">").concat((0,_helpers_monetaryMask_js__WEBPACK_IMPORTED_MODULE_5__["default"])(clientTotalValue), "</li>");
-            _this.article.appendChild(ul);
-            total += clientTotalValue;
-            break;
-          }
-        }
+      os.forEach(function (item) {
+        var ul = document.createElement("ul");
+        ul.classList.add("sales__report-item");
+        ul.classList.add("sales__report-style");
+        ul.innerHTML = " <li class=\"font-os-m-b color-13\">".concat(item.client_name, "</li>\n            <li class=\"font-os-m-b color-13\">").concat(date.month, " de ").concat(date.year, "</li>\n            <li class=\"font-os-m-b color-13\">").concat((0,_helpers_monetaryMask_js__WEBPACK_IMPORTED_MODULE_5__["default"])(item.total), "</li>");
+        _this.article.appendChild(ul);
+        total += item.total;
       });
       this.article.innerHTML += "<div class=\"sales__report-total color-13 font-os-xl-b\">\n                                <p>Total:</p>\n                                <p>".concat((0,_helpers_monetaryMask_js__WEBPACK_IMPORTED_MODULE_5__["default"])(total), "</p>\n                                </div>");
     }
@@ -2599,9 +2593,11 @@ var SalesBalance = /*#__PURE__*/function () {
       if (this.inputList.length <= 0) {
         return [];
       }
-      var month = (0,_helpers_formatDate_js__WEBPACK_IMPORTED_MODULE_6__.turningMonthInNumber)(this.inputList[0].value);
-      var year = this.inputList[1].value;
-      return "".concat(month, "-").concat(year);
+      var date = {
+        month: this.inputList[0].value,
+        year: this.inputList[1].value
+      };
+      return date;
     }
 
     // Métodos de execução
@@ -2611,7 +2607,7 @@ var SalesBalance = /*#__PURE__*/function () {
     key: "renderingSalesBalance",
     value: function () {
       var _renderingSalesBalance = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_0__["default"])( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default().mark(function _callee2() {
-        var os, date, month;
+        var os, date;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_3___default().wrap(function _callee2$(_context2) {
           while (1) switch (_context2.prev = _context2.next) {
             case 0:
@@ -2619,21 +2615,18 @@ var SalesBalance = /*#__PURE__*/function () {
               return this.searchOsByDate();
             case 2:
               os = _context2.sent;
+              date = this.handleInputInfo();
               this.article.classList.add("sales_report-container");
-              date = new Date();
-              month = new Intl.DateTimeFormat("pt-BR", {
-                month: "long"
-              }).format(date);
               if (os.length <= 0) {
                 this.ifSalesArrayEmpty();
               } else {
-                this.balanceTitle.innerHTML = "Ver balan\xE7o de vendas do m\xEAs ".concat(month);
+                this.balanceTitle.innerHTML = "Ver balan\xE7o de vendas do m\xEAs ".concat(date.month);
                 this.article.innerHTML = "";
-                this.ifSalesArrayFull(month, os, date);
+                this.ifSalesArrayFull(os, date);
                 this.handleSalesMoreLess(os);
                 this.salesWrapper.insertBefore(this.article, this.moreLessWrapper);
               }
-            case 7:
+            case 6:
             case "end":
               return _context2.stop();
           }
@@ -2648,27 +2641,16 @@ var SalesBalance = /*#__PURE__*/function () {
   }, {
     key: "handleSalesMoreLess",
     value: function handleSalesMoreLess(os) {
-      var valuesArray = [];
-      this.clients.forEach(function (client) {
-        for (var i = 0; i < os.length; i++) {
-          if (client.id === os[i].client_id) {
-            valuesArray.push({
-              name: client.name,
-              value: SalesBalance.calculateTotal(client.id, os)
-            });
-          }
-        }
+      var biggerValue = os.reduce(function (acc, val) {
+        return val.total > acc.total ? val : acc;
       });
-      var biggerValue = valuesArray.reduce(function (acc, val) {
-        return val.value > acc.value ? val : acc;
+      var minorValue = os.reduce(function (acc, val) {
+        return val.total < acc.total ? val : acc;
       });
-      var minorValue = valuesArray.reduce(function (acc, val) {
-        return val.value < acc.value ? val : acc;
-      });
-      this.moreLessWrapper.querySelector(".bigger-name").innerHTML = "".concat(biggerValue.name, " - ");
-      this.moreLessWrapper.querySelector(".bigger-value").innerHTML = (0,_helpers_monetaryMask_js__WEBPACK_IMPORTED_MODULE_5__["default"])(biggerValue.value);
-      this.moreLessWrapper.querySelector(".minor-name").innerHTML = "".concat(minorValue.name, " - ");
-      this.moreLessWrapper.querySelector(".minor-value").innerHTML = (0,_helpers_monetaryMask_js__WEBPACK_IMPORTED_MODULE_5__["default"])(minorValue.value);
+      this.moreLessWrapper.querySelector(".bigger-name").innerHTML = "".concat(biggerValue.client_name, " - ");
+      this.moreLessWrapper.querySelector(".bigger-value").innerHTML = (0,_helpers_monetaryMask_js__WEBPACK_IMPORTED_MODULE_5__["default"])(biggerValue.total);
+      this.moreLessWrapper.querySelector(".minor-name").innerHTML = "".concat(minorValue.client_name, " - ");
+      this.moreLessWrapper.querySelector(".minor-value").innerHTML = (0,_helpers_monetaryMask_js__WEBPACK_IMPORTED_MODULE_5__["default"])(minorValue.total);
       this.moreLessWrapper.style.display = "block";
     }
   }, {
@@ -2695,17 +2677,6 @@ var SalesBalance = /*#__PURE__*/function () {
         this.handleEvents();
       }
       return this;
-    }
-  }], [{
-    key: "calculateTotal",
-    value: function calculateTotal(clientId, os) {
-      var total = 0;
-      os.forEach(function (element) {
-        if (clientId === element.client_id) {
-          total += element.budgetValue ? element.budgetValue : element.total;
-        }
-      });
-      return total;
     }
   }]);
 }();
@@ -2784,7 +2755,7 @@ var monthSales = new _modules_month_sales_month_sales_js__WEBPACK_IMPORTED_MODUL
 monthSales.init();
 var navigation = new _modules_global_navigation_js__WEBPACK_IMPORTED_MODULE_11__["default"](".page__navigation-prev", ".page__navigation-next");
 navigation.init();
-var salesBalance = new _modules_sales_balance_sales_balance_js__WEBPACK_IMPORTED_MODULE_9__["default"](url, clients, "[data-sales-balance]", ".balance-title", ".sales__more-less", "[data-balance]");
+var salesBalance = new _modules_sales_balance_sales_balance_js__WEBPACK_IMPORTED_MODULE_9__["default"](url, "[data-sales-balance]", ".sales__more-less", "[data-balance]", ".balance-title");
 salesBalance.init();
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } }, 1);

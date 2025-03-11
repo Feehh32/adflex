@@ -4,10 +4,9 @@ import { turningMonthInNumber } from "../helpers/formatDate.js";
 import { fieldValidation } from "../client/form_validations";
 
 export default class SalesBalance {
-  constructor(url, clients, salesWrapper, balanceTitle, moreLessWrapper, inputList) {
-    this.clients = clients;
-    this.salesWrapper = document.querySelector(salesWrapper);
+  constructor(url, salesWrapper, moreLessWrapper, inputList, balanceTitle) {
     this.url = url;
+    this.salesWrapper = document.querySelector(salesWrapper);
     this.moreLessWrapper = document.querySelector(moreLessWrapper);
     this.inputList = document.querySelectorAll(inputList);
 
@@ -32,14 +31,12 @@ export default class SalesBalance {
   // Busca as notas de serviço no bando de dados baseado em um determinado mês e ano
   async searchOsByDate() {
     const apiService = new ApiService(this.url);
-    // const month = String(date.getMonth() + 1).padStart(2, "0");
-    const monthYear = this.handleInputInfo();
-
-    if (monthYear) {
+    const date = this.handleInputInfo();
+    if (date) {
+      const monthYear = `${turningMonthInNumber(date.month)}-${date.year}`;
       const { os } = await apiService.getByMonth("os", monthYear);
       return os;
     }
-
     return [];
   }
 
@@ -50,23 +47,17 @@ export default class SalesBalance {
   }
 
   // Se houver itens dentro do array de serviços renderiza os clientes e o total de suas vendas
-  ifSalesArrayFull(month, os, date) {
+  ifSalesArrayFull(os, date) {
     let total = 0;
-    this.clients.forEach((client) => {
-      for (let i = 0; i < os.length; i++) {
-        if (client.id === os[i].client_id) {
-          const clientTotalValue = SalesBalance.calculateTotal(client.id, os);
-          const ul = document.createElement("ul");
-          ul.classList.add("sales__report-item");
-          ul.classList.add("sales__report-style");
-          ul.innerHTML = ` <li class="font-os-m-b color-13">${client.name}</li>
-            <li class="font-os-m-b color-13">${month} de ${date.getFullYear()}</li>
-            <li class="font-os-m-b color-13">${monetaryMask(clientTotalValue)}</li>`;
-          this.article.appendChild(ul);
-          total += clientTotalValue;
-          break;
-        }
-      }
+    os.forEach((item) => {
+      const ul = document.createElement("ul");
+      ul.classList.add("sales__report-item");
+      ul.classList.add("sales__report-style");
+      ul.innerHTML = ` <li class="font-os-m-b color-13">${item.client_name}</li>
+            <li class="font-os-m-b color-13">${date.month} de ${date.year}</li>
+            <li class="font-os-m-b color-13">${monetaryMask(item.total)}</li>`;
+      this.article.appendChild(ul);
+      total += item.total;
     });
 
     this.article.innerHTML += `<div class="sales__report-total color-13 font-os-xl-b">
@@ -75,24 +66,16 @@ export default class SalesBalance {
                                 </div>`;
   }
 
-  static calculateTotal(clientId, os) {
-    let total = 0;
-    os.forEach((element) => {
-      if (clientId === element.client_id) {
-        total += element.budgetValue ? element.budgetValue : element.total;
-      }
-    });
-
-    return total;
-  }
-
   handleInputInfo() {
     if (this.inputList.length <= 0) {
       return [];
     }
-    const month = turningMonthInNumber(this.inputList[0].value);
-    const year = this.inputList[1].value;
-    return `${month}-${year}`;
+    const date = {
+      month: this.inputList[0].value,
+      year: this.inputList[1].value,
+    };
+
+    return date;
   }
 
   // Métodos de execução
@@ -100,17 +83,15 @@ export default class SalesBalance {
   // Renderiza na tela a exibição dos dados
   async renderingSalesBalance() {
     const os = await this.searchOsByDate();
+    const date = this.handleInputInfo();
     this.article.classList.add("sales_report-container");
-
-    const date = new Date();
-    const month = new Intl.DateTimeFormat("pt-BR", { month: "long" }).format(date);
 
     if (os.length <= 0) {
       this.ifSalesArrayEmpty();
     } else {
-      this.balanceTitle.innerHTML = `Ver balanço de vendas do mês ${month}`;
+      this.balanceTitle.innerHTML = `Ver balanço de vendas do mês ${date.month}`;
       this.article.innerHTML = "";
-      this.ifSalesArrayFull(month, os, date);
+      this.ifSalesArrayFull(os, date);
       this.handleSalesMoreLess(os);
       this.salesWrapper.insertBefore(this.article, this.moreLessWrapper);
     }
@@ -119,25 +100,13 @@ export default class SalesBalance {
   // Lida com o calculo e com a exibição do cliente que menos vendo e
   // do cliente que mais vendeu
   handleSalesMoreLess(os) {
-    const valuesArray = [];
-    this.clients.forEach((client) => {
-      for (let i = 0; i < os.length; i++) {
-        if (client.id === os[i].client_id) {
-          valuesArray.push({
-            name: client.name,
-            value: SalesBalance.calculateTotal(client.id, os),
-          });
-        }
-      }
-    });
+    const biggerValue = os.reduce((acc, val) => (val.total > acc.total ? val : acc));
+    const minorValue = os.reduce((acc, val) => (val.total < acc.total ? val : acc));
 
-    const biggerValue = valuesArray.reduce((acc, val) => (val.value > acc.value ? val : acc));
-    const minorValue = valuesArray.reduce((acc, val) => (val.value < acc.value ? val : acc));
-
-    this.moreLessWrapper.querySelector(".bigger-name").innerHTML = `${biggerValue.name} - `;
-    this.moreLessWrapper.querySelector(".bigger-value").innerHTML = monetaryMask(biggerValue.value);
-    this.moreLessWrapper.querySelector(".minor-name").innerHTML = `${minorValue.name} - `;
-    this.moreLessWrapper.querySelector(".minor-value").innerHTML = monetaryMask(minorValue.value);
+    this.moreLessWrapper.querySelector(".bigger-name").innerHTML = `${biggerValue.client_name} - `;
+    this.moreLessWrapper.querySelector(".bigger-value").innerHTML = monetaryMask(biggerValue.total);
+    this.moreLessWrapper.querySelector(".minor-name").innerHTML = `${minorValue.client_name} - `;
+    this.moreLessWrapper.querySelector(".minor-value").innerHTML = monetaryMask(minorValue.total);
 
     this.moreLessWrapper.style.display = "block";
   }

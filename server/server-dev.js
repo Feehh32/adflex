@@ -88,10 +88,9 @@ app.get("/service_details/:id", async (req, res) => {
 app.get("/os/:date", async (req, res) => {
   try {
     const { date } = req.params;
-    const { data, error } = await supabase
-      .from("service_notes")
-      .select("*")
-      .like("date", `%-${date}-%`);
+    const { data, error } = await supabase.rpc("get_monthly_balance", {
+      month_year: date,
+    });
 
     if (error) throw error;
     res.json({ os: data });
