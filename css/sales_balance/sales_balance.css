@@ -1,0 +1,89 @@
+.input__balance {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  column-gap: 32px;
+  margin-bottom: 60px;
+}
+
+.input__balance input,
+.input__balance select {
+  margin-top: 8px;
+}
+
+.input__balance button {
+  margin: 8px 0 0 0;
+  max-width: 200px;
+}
+
+.sales__wrapper h2,
+.sales__wrapper h4 {
+  display: flex;
+  flex-direction: column;
+}
+
+.sales__wrapper h2::after,
+.sales__wrapper h4::after {
+  content: "";
+  height: 1px;
+  background-color: var(--color-9);
+  width: 100%;
+  margin-top: 20px;
+}
+
+.sales__wrapper h4 {
+  margin-top: 60px;
+}
+
+.sales__report-style {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  position: relative;
+  margin-top: 32px;
+}
+
+.sales__wrapper .sales__report-style:first-child::after {
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: 1px;
+  background-color: var(--color-14);
+  top: -32px;
+}
+
+.sales__report-style li:last-child {
+  justify-self: end;
+}
+
+.sales__report-style li:nth-child(2) {
+  justify-self: center;
+}
+
+.sales__more-less {
+  display: none;
+}
+
+.sales__more-less--info {
+  background-color: var(--color-11);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 32px;
+  margin-top: 20px;
+  border-radius: 4px;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+}
+
+.more-less-style {
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 860px) {
+  .input__balance {
+    display: block;
+  }
+
+  .input__balance select {
+    margin-bottom: 16px;
+  }
+}

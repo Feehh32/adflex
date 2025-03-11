@@ -4,7 +4,6 @@ export const fieldValidation = (field, msgErr, errorsType, msgField) => {
 
   if (field && field.validity) {
     field.setCustomValidity("");
-
     errorsType.forEach((error) => {
       if (field.validity[error]) {
         msg = msgErr[field.name][error];

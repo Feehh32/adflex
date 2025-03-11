@@ -85,6 +85,21 @@ function initServer(electronApp) {
     }
   });
 
+  // Buscando todas as os e os serviços por um determinado mês e ano no banco de dados
+  app.get("/os/:date", async (req, res) => {
+    try {
+      const { date } = req.params;
+      const { data, error } = await supabase.rpc("get_monthly_balance", {
+        month_year: date,
+      });
+
+      if (error) throw error;
+      res.json({ os: data });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
   // ================= Métodos de POST ====================
 
   // Inserindo um cliente no banco de dados

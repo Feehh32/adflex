@@ -10,7 +10,12 @@
   display: grid;
   grid-template-columns: 3fr 1.5fr 1fr;
   column-gap: 40px;
-  margin-bottom: 32px;
+  margin-bottom: 60px;
+}
+
+.form__sales button {
+  margin: 8px 0 0 0;
+  max-width: 200px;
 }
 
 .form__sales .input-pattern {

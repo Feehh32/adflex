@@ -1,6 +1,6 @@
 import monetaryMask from "../helpers/monetaryMask";
 import { fieldValidation } from "../client/form_validations";
-import { handleCustomDate } from "../helpers/formatDate.js";
+import { handleCustomDate, turningMonthInNumber } from "../helpers/formatDate.js";
 
 /* eslint-disable operator-linebreak */
 export default class MonthSales {
@@ -44,26 +44,6 @@ export default class MonthSales {
     });
   }
 
-  // transformando o mês escrito em nome para escrito como numero
-  static turningMonthInNumber(monthName) {
-    const monthObj = {
-      janeiro: "01",
-      fevereiro: "02",
-      março: "03",
-      abril: "04",
-      maio: "05",
-      junho: "06",
-      julho: "07",
-      agosto: "08",
-      setembro: "09",
-      outubro: "10",
-      novembro: "11",
-      dezembro: "12",
-    };
-
-    return monthObj[monthName.toLowerCase()] || null;
-  }
-
   // Filtra a os baseado nos dados do formulário preenchido
   // buscando eles no localStorage
   filterOs() {
@@ -72,8 +52,9 @@ export default class MonthSales {
       this.dataForm = JSON.parse(lsData);
     }
     this.filteredOs = this.os.filter((item) => {
+      // eslint-disable-next-line no-unused-vars
       const [cday, cMonth, cYear] = item.date.split("-");
-      const monthNumber = MonthSales.turningMonthInNumber(this.dataForm.monthSale.toLowerCase());
+      const monthNumber = turningMonthInNumber(this.dataForm.monthSale.toLowerCase());
       if (monthNumber) {
         return (
           item.client === this.dataForm.clientSale &&
@@ -133,7 +114,7 @@ export default class MonthSales {
     }
   }
 
-  // Renderiza a seção que exiba as vendas do mês e o total vendido
+  // Renderiza a seção que exibe as vendas do mês e o total vendido
   renderingMonthSales() {
     const salesTitle = document.querySelector("[data-sale-title]");
     this.article.innerHTML = "";

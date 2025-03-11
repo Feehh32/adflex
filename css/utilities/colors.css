@@ -118,3 +118,7 @@
 .delete-red {
   color: var(--delete-red);
 }
+
+.main-green-s {
+  color: var(--main-green-s);
+}
