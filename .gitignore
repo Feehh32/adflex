@@ -10,3 +10,4 @@ documento-dados-nota-fiscal.pdf.env
 supabase_client.js
 export_db_to_csv.js
 server_model.js
+server-dev.js
