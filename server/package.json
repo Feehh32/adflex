@@ -1,6 +1,6 @@
 {
   "name": "ad-flex-server",
-  "version": "1.5",
+  "version": "1.1.5",
   "description": "adFlex server",
   "main": "server-dev.js",
   "scripts": {

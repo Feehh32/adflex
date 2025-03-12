@@ -27,7 +27,7 @@
 }
 
 .main__clients-card {
-  background: url("../../img/home/client-wrapper-bg.png");
+  background: url("../img/home/client-wrapper-bg.png");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
