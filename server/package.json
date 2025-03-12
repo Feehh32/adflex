@@ -5,7 +5,7 @@
   "main": "server-dev.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server-dev.js"
+    "start": "node server.js"
   },
   "author": "Fernando Pereira",
   "license": "ISC",
