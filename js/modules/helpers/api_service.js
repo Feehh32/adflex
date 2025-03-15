@@ -25,10 +25,9 @@ export default class ApiService {
 
   async getWithId(endpoint, id) {
     try {
-      let url = `${this.baseUrl}/${endpoint}/${id}`;
-      if (this.optionParams) {
-        url += `/${this.optionParams}`;
-      }
+      const parseId = parseInt(id, 10);
+      const url = `${this.baseUrl}/${endpoint}/${parseId}`;
+
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -40,12 +39,28 @@ export default class ApiService {
     }
   }
 
-  async getByMonth(endpoint, date) {
+  async getBalance(endpoint, date) {
     try {
-      let url = `${this.baseUrl}/${endpoint}/${date}`;
-      if (this.optionParams) {
-        url += `/${this.optionParams}`;
+      const encodeDate = encodeURIComponent(date);
+      const url = `${this.baseUrl}/${endpoint}/${encodeDate}`;
+
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+      return await response.json();
+    } catch (error) {
+      console.error("Erro ao buscar no servidor:", error);
+      throw error;
+    }
+  }
+
+  async getMonthSales(endpoint, date, id) {
+    try {
+      const encodeDate = encodeURIComponent(date);
+      const parseId = parseInt(id, 10);
+      const url = `${this.baseUrl}/${endpoint}/${encodeDate}/${parseId}`;
+
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

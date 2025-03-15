@@ -34,7 +34,7 @@ export default class SalesBalance {
     const date = this.handleInputInfo();
     if (date) {
       const monthYear = `${turningMonthInNumber(date.month)}-${date.year}`;
-      const { os } = await apiService.getByMonth("os", monthYear);
+      const { os } = await apiService.getBalance("os", monthYear);
       return os;
     }
     return [];

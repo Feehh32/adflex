@@ -81,7 +81,7 @@ const monthSales = new MonthSales(
   "[data-sales-wrapper]",
   "[data-sale-btn]",
   clients,
-  os
+  url
 );
 monthSales.init();
 
