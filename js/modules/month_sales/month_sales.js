@@ -1,20 +1,19 @@
 import monetaryMask from "../helpers/monetaryMask";
 import { fieldValidation } from "../client/form_validations";
 import { handleCustomDate, turningMonthInNumber } from "../helpers/formatDate.js";
+import ApiService from "../helpers/api_service.js";
 
 /* eslint-disable operator-linebreak */
 export default class MonthSales {
-  constructor(form, salesWrapper, btnPrint, clients, os) {
+  constructor(form, salesWrapper, btnPrint, clients, url) {
     this.form = document.querySelector(form);
     this.salesWrapper = document.querySelector(salesWrapper);
     this.btnPrint = document.querySelector(btnPrint);
     this.clients = clients;
-    this.os = os;
+    this.url = url;
 
     this.article = document.createElement("article");
-    this.dataForm = [];
-    this.filteredOs = [];
-    this.total = null;
+    this.article.classList.add("sales_report-container");
 
     this.printMonthSales = this.printMonthSales.bind(this);
     this.handleFormSales = this.handleFormSales.bind(this);
@@ -46,54 +45,63 @@ export default class MonthSales {
 
   // Filtra a os baseado nos dados do formulário preenchido
   // buscando eles no localStorage
-  filterOs() {
-    const lsData = localStorage.getItem("formData");
-    if (lsData) {
-      this.dataForm = JSON.parse(lsData);
-    }
-    this.filteredOs = this.os.filter((item) => {
-      // eslint-disable-next-line no-unused-vars
-      const [cday, cMonth, cYear] = item.date.split("-");
-      const monthNumber = turningMonthInNumber(this.dataForm.monthSale.toLowerCase());
-      if (monthNumber) {
-        return (
-          item.client === this.dataForm.clientSale &&
-          cMonth === monthNumber &&
-          cYear === this.dataForm.yearSale
-        );
-      }
-      return this.filteredOs;
-    });
-  }
+  async searchOs() {
+    const { clientSale, monthSale, yearSale } = JSON.parse(localStorage.getItem("formData"));
+    let objSales;
 
-  // Define o que será mostrado na tela caso o a busca no formúlario
-  // não tenha nenhuma correspondencia
-  static ifWrongDate() {
-    const contentScreen = `   
-      <p class="font-os-s color-13">Nenhuma venda foi registrada neste mês para o cliente selecionado,
-        verifique os dados que foram inseridos no formulário acima e tente novamente.
-    </p>`;
-    return contentScreen;
+    if (clientSale && monthSale && yearSale) {
+      const date = `${turningMonthInNumber(monthSale)}-${yearSale}`;
+      const { id } = this.clients.find((client) => client.name === clientSale);
+      const apiService = new ApiService(this.url);
+      const { os } = await apiService.getMonthSales("os", date, id);
+      console.log(os);
+      if (os.length > 0) {
+        objSales = {
+          client: clientSale,
+          notes: os,
+          monthName: monthSale,
+        };
+        return objSales;
+      }
+      objSales = {
+        missingMgs: `   
+                <p class="font-os-s color-13">Nenhuma venda foi registrada neste mês para o cliente selecionado,
+                verifique os dados que foram inseridos no formulário acima e tente novamente.
+                </p>
+              `,
+      };
+    }
+    return objSales;
   }
 
   // Mostra os items das vendas mensais
-  static ifRightDate(filteredOs) {
-    let contentScreen = "";
-    filteredOs.forEach((os) => {
+  ifRightDate(notes) {
+    let totalSales = 0;
+    notes.forEach((os) => {
       const customMonth = handleCustomDate(os.date);
       const totalValue = os.budgetValue > 0 && os.budgetValue !== null ? os.budgetValue : os.total;
       const osTotal = monetaryMask(totalValue);
-      contentScreen += ` 
-          <ul class="sales__report-item font-os-m-b color-13">
-            <li>${os.code}</li>
-            <li>${customMonth}</li>
-            <li>${osTotal}</li>
-          </ul>`;
+      const ul = document.createElement("ul");
+      ul.classList.add("sales__report-item");
+      ul.classList.add("font-os-m-b");
+      ul.classList.add("color-13");
+      ul.innerHTML += ` 
+                      <li>${os.code}</li>
+                      <li>${customMonth}</li>
+                      <li>${osTotal}</li>
+                      `;
+      totalSales += totalValue;
+      this.article.appendChild(ul);
     });
-    return contentScreen;
+    this.article.innerHTML += `<div class="sales__report-total color-13 font-os-xl-b">
+                          <p>Total:</p>
+                          <p>${monetaryMask(totalSales)}</p>
+                      </div>
+                    `;
   }
 
   // Métodos de execução
+
   // captura os dados do form e envia para o localStorage
   static getData(e) {
     const formData = new FormData(e.target);
@@ -103,44 +111,20 @@ export default class MonthSales {
     localStorage.setItem("formData", dataString);
   }
 
-  // Calcura o total das vendas do mês
-  calculateTotal() {
-    if (this.filteredOs.length) {
-      this.total = 0;
-      this.filteredOs.forEach((os) => {
-        this.total += os.total;
-        if (os.budgetValue > 0 && os.budgetValue !== null) this.total += os.budgetValue;
-      });
-    }
-  }
-
   // Renderiza a seção que exibe as vendas do mês e o total vendido
-  renderingMonthSales() {
+  async renderingMonthSales() {
+    const os = await this.searchOs();
     const salesTitle = document.querySelector("[data-sale-title]");
     this.article.innerHTML = "";
-    this.article.classList.add("sales_report-container");
 
-    if (!this.filteredOs.length) {
-      const msg = MonthSales.ifWrongDate();
+    if (!Object.hasOwn(os, "missingMgs")) {
+      salesTitle.innerHTML = `Valores vendidos no mês de ${os.monthName}`;
       this.btnPrint.style.display = "block";
-      salesTitle.innerHTML = "";
-      this.article.innerHTML = msg;
+      this.article.innerHTML += ` <h3 class="font-os-xl-b color-13">${os.client}</h3>`;
+      this.ifRightDate(os.notes);
     } else {
-      const titleContent = `Valores vendidos no mês de ${this.dataForm.monthSale}`;
-      salesTitle.innerHTML = titleContent;
-      this.btnPrint.style.display = "block";
-
-      const salesTotal = monetaryMask(this.total);
-      const salesContent = MonthSales.ifRightDate(this.filteredOs);
-
-      this.article.innerHTML += ` <h3 class="font-os-xl-b color-13">${this.dataForm.clientSale}</h3>`;
-      this.article.innerHTML += salesContent;
-      this.article.innerHTML += `
-            <div class="sales__report-total color-13 font-os-xl-b">
-                <p>Total:</p>
-                <p>${salesTotal}</p>
-            </div>
-           `;
+      salesTitle.innerHTML = `ALGO ERRADO!!!`;
+      this.article.innerHTML = os.missingMgs;
     }
     this.salesWrapper.insertBefore(this.article, this.btnPrint);
   }
@@ -149,8 +133,6 @@ export default class MonthSales {
   handleFormSales(e) {
     e.preventDefault();
     MonthSales.getData(e);
-    this.filterOs();
-    this.calculateTotal();
     this.renderingMonthSales();
   }
 

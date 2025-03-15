@@ -85,6 +85,23 @@ function initServer(electronApp) {
     }
   });
 
+  // Buscando todas as os e os serviços baseados na date e no client_id
+  app.get("/os/:date/:id", async (req, res) => {
+    try {
+      const { date, id } = req.params;
+      const { data, error } = await supabase
+        .from("service_notes")
+        .select("*")
+        .ilike("date", `%${date}%`)
+        .eq("client_id", id);
+
+      if (error) throw error;
+      res.json({ os: data });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
   // Buscando todas as os e os serviços por um determinado mês e ano no banco de dados
   app.get("/os/:date", async (req, res) => {
     try {
