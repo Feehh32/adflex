@@ -39,10 +39,11 @@ export default class ApiService {
     }
   }
 
-  async getBalance(endpoint, date) {
+  async getBalance(endpoint, month, year) {
     try {
-      const encodeDate = encodeURIComponent(date);
-      const url = `${this.baseUrl}/${endpoint}/${encodeDate}`;
+      const encodeMonth = encodeURIComponent(month);
+      const encodeYear = encodeURIComponent(year);
+      const url = `${this.baseUrl}/${endpoint}/${encodeMonth}/${encodeYear}`;
 
       const response = await fetch(url);
       if (!response.ok) {

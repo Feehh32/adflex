@@ -19,7 +19,7 @@ function initServer(electronApp) {
     console.log(`Servidor rodando na porta ${port}`);
   });
 
-  // ================= Métodos de GET ====================
+  // ================= Requisições GET ====================
 
   // Buscando clientes no banco de dados
   app.get("/clients", async (req, res) => {
@@ -44,6 +44,7 @@ function initServer(electronApp) {
   });
 
   // Buscando as informações da nota de serviço no banco de dados
+  // Função referente a requisição GET de service_details
   async function columnExists(columnName) {
     const { data: columns, error } = await supabase
       .from("information_schema.columns")
@@ -86,7 +87,7 @@ function initServer(electronApp) {
   });
 
   // Buscando todas as os e os serviços baseados na date e no client_id
-  app.get("/os/:date/:id", async (req, res) => {
+  app.get("/os/by-date-id/:date/:id", async (req, res) => {
     try {
       const { date, id } = req.params;
       const { data, error } = await supabase
@@ -103,11 +104,12 @@ function initServer(electronApp) {
   });
 
   // Buscando todas as os e os serviços por um determinado mês e ano no banco de dados
-  app.get("/os/:date", async (req, res) => {
+  app.get("/os/by-month-year/:month/:year", async (req, res) => {
     try {
-      const { date } = req.params;
+      const { month, year } = req.params;
+      console.log(`${month}-${year}`);
       const { data, error } = await supabase.rpc("get_monthly_balance", {
-        month_year: date,
+        month_year: `${month}-${year}`,
       });
 
       if (error) throw error;
@@ -117,7 +119,20 @@ function initServer(electronApp) {
     }
   });
 
-  // ================= Métodos de POST ====================
+  // // Buscando todas as os baseadas no id do client
+  app.get("/os/by-id/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { data, error } = await supabase.from("service_notes").select("*").eq("client_id", id);
+
+      if (error) throw error;
+      res.json({ os: data });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // ================= Requisições POST ====================
 
   // Inserindo um cliente no banco de dados
 
@@ -245,7 +260,7 @@ function initServer(electronApp) {
     }
   });
 
-  // ================= Métodos de PUT ====================
+  // ================= Requisições PUT ====================
 
   // Atualizando ou alterando os dados do client cadastrado baseado no ID do mesmo
   app.put("/clients/:id", async (req, res) => {
@@ -277,7 +292,7 @@ function initServer(electronApp) {
     }
   });
 
-  // ================= Métodos de DELETE ====================
+  // ================= Requisições DELETE ====================
 
   // Deletando um cliente
   app.delete("/clients/:id", async (req, res) => {

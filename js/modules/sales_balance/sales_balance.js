@@ -33,8 +33,10 @@ export default class SalesBalance {
     const apiService = new ApiService(this.url);
     const date = this.handleInputInfo();
     if (date) {
-      const monthYear = `${turningMonthInNumber(date.month)}-${date.year}`;
-      const { os } = await apiService.getBalance("os", monthYear);
+      const month = turningMonthInNumber(date.month);
+      const { year } = date;
+      console.log(`Fazendo requisição para: ${this.url}/os/${month}/${year}`);
+      const { os } = await apiService.getBalance("os/by-month-year", month, year);
       return os;
     }
     return [];

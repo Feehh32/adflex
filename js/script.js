@@ -55,8 +55,8 @@ const clientOs = new ClientOs(
   "[data-osSearch]",
   '[data-os="ver-mais"]',
   '[data-os="ver-menos"]',
-  os,
-  clientPage.client
+  clientPage.client,
+  url
 );
 clientOs.init();
 

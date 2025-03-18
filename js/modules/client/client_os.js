@@ -1,15 +1,17 @@
+import ApiService from "../helpers/api_service.js";
 import { handleCustomDate } from "../helpers/formatDate.js";
 
 /* eslint-disable operator-linebreak */
 export default class ClientOs {
-  constructor(osWrapper, osSearch, btnShowMore, btnShowLess, osList, client) {
+  constructor(osWrapper, osSearch, btnShowMore, btnShowLess, client, url) {
     this.osWrapper = document.querySelector(osWrapper);
     this.fieldSearch = document.querySelector(osSearch);
     this.btnShowMore = document.querySelector(btnShowMore);
     this.btnShowLess = document.querySelector(btnShowLess);
     this.client = client;
-    this.osList = osList;
-    this.filteredOs = this.filterOsPerCLient();
+    this.url = url;
+
+    this.filteredOs = [];
     this.osBoxSize = 10;
 
     this.handleSearch = this.handleSearch.bind(this);
@@ -18,18 +20,21 @@ export default class ClientOs {
   }
 
   // Métodos de auxílio
+
   // Filtra as ordens de serviço baseado no cliente
-  filterOsPerCLient() {
+  async filterOsPerCLient() {
     if (this.client) {
-      return this.osList.filter((os) => os.client_id === this.client.id);
+      const apiServices = new ApiService(this.url);
+      const { os } = await apiServices.getWithId("os/by-id", this.client.id);
+      return os;
     }
     return [];
   }
 
   //  Métodos de exibição
   // Mostras as notas de serviço na tela em ordem de inserção
-  showOsOnPage(osList) {
-    const revFilteredOs = [...osList].reverse().slice(0, this.osBoxSize);
+  showOsOnPage() {
+    const revFilteredOs = [...this.filteredOs].reverse().slice(0, this.osBoxSize);
     this.osWrapper.innerHTML = "";
 
     revFilteredOs.forEach((os) => {
@@ -54,6 +59,14 @@ export default class ClientOs {
     if (this.filteredOs.length > this.osBoxSize) {
       this.btnShowMore.classList.add("active");
     }
+  }
+
+  // Atualiza os dados da classe após receber os resultados assíncronos
+  async loadOsData() {
+    this.filteredOs = await this.filterOsPerCLient();
+    this.showOsOnPage();
+    this.showOsBoxSizeBtn();
+    console.log(this.filteredOs);
   }
 
   // Métodos de execução
@@ -100,8 +113,9 @@ export default class ClientOs {
     this.btnShowMore.removeEventListener("click", this.handleShowMore);
   }
 
-  init() {
+  async init() {
     if (this.osWrapper) {
+      await this.loadOsData();
       this.showOsBoxSizeBtn();
       this.addEvents();
       this.showOsOnPage(this.filteredOs);
