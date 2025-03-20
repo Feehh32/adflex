@@ -55,8 +55,8 @@ const clientOs = new ClientOs(
   "[data-osSearch]",
   '[data-os="ver-mais"]',
   '[data-os="ver-menos"]',
-  os,
-  clientPage.client
+  clientPage.client,
+  url
 );
 clientOs.init();
 
@@ -73,7 +73,7 @@ const formOs = new FormOs(
 );
 formOs.init();
 
-const osPage = new OsPage(os, "[data-titleOs] span", "[data-os]", "[data-buttonOs]", url);
+const osPage = new OsPage("[data-titleOs] span", "[data-os]", "[data-buttonOs]", url);
 osPage.init();
 
 const monthSales = new MonthSales(

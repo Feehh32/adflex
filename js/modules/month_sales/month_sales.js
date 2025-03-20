@@ -53,8 +53,7 @@ export default class MonthSales {
       const date = `${turningMonthInNumber(monthSale)}-${yearSale}`;
       const { id } = this.clients.find((client) => client.name === clientSale);
       const apiService = new ApiService(this.url);
-      const { os } = await apiService.getMonthSales("os", date, id);
-      console.log(os);
+      const { os } = await apiService.getMonthSales("os/by-date-id", date, id);
       if (os.length > 0) {
         objSales = {
           client: clientSale,
