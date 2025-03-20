@@ -25,7 +25,7 @@ export default class ClientOs {
   async filterOsPerCLient() {
     if (this.client) {
       const apiServices = new ApiService(this.url);
-      const { os } = await apiServices.getWithId("os/by-id", this.client.id);
+      const { os } = await apiServices.getParameters("os/by-id", parseInt(this.client.id, 10));
       return os;
     }
     return [];
@@ -66,7 +66,6 @@ export default class ClientOs {
     this.filteredOs = await this.filterOsPerCLient();
     this.showOsOnPage();
     this.showOsBoxSizeBtn();
-    console.log(this.filteredOs);
   }
 
   // Métodos de execução

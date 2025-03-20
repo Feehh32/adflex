@@ -5,13 +5,13 @@ import { handleCustomDate } from "../helpers/formatDate.js";
 import confirmModal from "../helpers/confirm_modal.js";
 
 export default class OsPage {
-  constructor(os, titleCode, osWrapper, btn, url) {
-    this.os = this.filteredOs(os);
+  constructor(titleCode, osWrapper, btn, url) {
     this.url = url;
     this.titleCode = document.querySelector(titleCode);
     this.osWrapper = document.querySelector(osWrapper);
     this.btn = document.querySelectorAll(btn);
 
+    this.os = null;
     this.urlId = null;
     this.msgWrapper = document.createElement("span");
 
@@ -28,10 +28,11 @@ export default class OsPage {
   }
 
   // Filtra o array de os's baseado no id fornecido na url
-  filteredOs(os) {
+  async searchOsById() {
     this.urlId = OsPage.getIdFromUrl();
-    const filteredOs = os.find((item) => item.id === parseFloat(this.urlId));
-    return filteredOs;
+    const apiServices = new ApiService(this.url);
+    const { os } = await apiServices.getParameters("os/byOs-id", this.urlId);
+    return os[0];
   }
 
   // Lida com a opção de esconder ou mostrar as medidas da os
@@ -50,10 +51,9 @@ export default class OsPage {
     try {
       const apiServices = new ApiService(this.url);
       const service = await apiServices
-        .getWithId("service_details", String(this.os.id))
+        .getParameters("service_details", String(this.os.id))
         .then((data) => data.data);
       const filteredService = service.filter((item) => item.note_id === this.os.id);
-      filteredService.sort((a, b) => a.order - b.order);
       return filteredService;
     } catch (err) {
       console.error(err);
@@ -223,8 +223,9 @@ export default class OsPage {
     });
   }
 
-  init() {
+  async init() {
     if (this.btn.length) {
+      this.os = await this.searchOsById();
       this.osCodeOnTitle();
       this.showOsOnScreen();
       this.addEventsOnButton();

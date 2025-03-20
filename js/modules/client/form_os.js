@@ -1,7 +1,6 @@
 /* eslint-disable no-restricted-syntax */
 import { fieldValidation, showMessage } from "./form_validations.js";
 import ApiService from "../helpers/api_service.js";
-import { parseDate } from "../helpers/formatDate.js";
 
 export default class FormOs {
   constructor(form, btnServAmount, services, clients, os, url) {
@@ -169,24 +168,15 @@ export default class FormOs {
   }
 
   // Método que encontra a última os adicionada
-  static findLastOs(notes, clientName) {
-    if (notes.length === 0) return null;
-
-    const filteredNotes = notes.filter((note) => note.client === clientName);
-    let mostRecentNote = filteredNotes[filteredNotes.length - 1];
-
-    if (filteredNotes.length === 0) return null;
-    filteredNotes.forEach((note) => {
-      if (parseDate(note.date) > parseDate(mostRecentNote.date)) {
-        mostRecentNote = note;
-      }
-    });
-
-    return mostRecentNote;
+  async findLastOs(clientName) {
+    const apiService = new ApiService(this.url);
+    const { os } = await apiService.getParameters("os/by-clientName", clientName);
+    if (!os) return null;
+    return os;
   }
 
   // Método que compara as datas da os a ser inserida com a última os retornada
-  static ComparingDate(currentDate, lastOsDate) {
+  static comparingDate(currentDate, lastOsDate) {
     if (lastOsDate) {
       // eslint-disable-next-line no-unused-vars
       const [, cMonth, cYear] = currentDate.split("-");
@@ -200,9 +190,9 @@ export default class FormOs {
   }
 
   // Método que cria o codigo de controle da os
-  getOsCode(date, clientName) {
-    const lastOs = FormOs.findLastOs(this.os, clientName);
-    if (lastOs !== null && date && FormOs.ComparingDate(date, lastOs.date)) {
+  async getOsCode(date, clientName) {
+    const lastOs = await this.findLastOs(clientName);
+    if (lastOs !== null && date && FormOs.comparingDate(date, lastOs.date)) {
       return String(Number(lastOs.code) + 1).padStart(3, 0);
     }
     return "1".padStart(3, 0);
@@ -257,7 +247,7 @@ export default class FormOs {
       service: this.handleServiceValues(e),
       date: this.currentDate,
       total: 0,
-      code: this.getOsCode(this.currentDate, clientName),
+      code: await this.getOsCode(this.currentDate, clientName),
       budgetValue: FormOs.handleBudgetValue(),
     };
 

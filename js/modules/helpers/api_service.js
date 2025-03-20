@@ -23,10 +23,9 @@ export default class ApiService {
     }
   }
 
-  async getWithId(endpoint, id) {
+  async getParameters(endpoint, param) {
     try {
-      const parseId = parseInt(id, 10);
-      const url = `${this.baseUrl}/${endpoint}/${parseId}`;
+      const url = `${this.baseUrl}/${endpoint}/${param}`;
 
       const response = await fetch(url);
       if (!response.ok) {

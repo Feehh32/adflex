@@ -45,40 +45,17 @@ function initServer(electronApp) {
 
   // Buscando as informações da nota de serviço no banco de dados
   // Função referente a requisição GET de service_details
-  async function columnExists(columnName) {
-    const { data: columns, error } = await supabase
-      .from("information_schema.columns")
-      .select("column_name")
-      .eq("table_name", "service_details")
-      .eq("column_name", columnName);
-
-    if (error) {
-      console.error("Erro ao verificar colunas:", error);
-      return false;
-    }
-
-    return columns.length > 0;
-  }
 
   app.get("/service_details/:id", async (req, res) => {
     try {
       const { id } = req.params;
-      let query = supabase.from("service_details").select("*").eq("note_id", id);
-
-      if (await columnExists("order")) {
-        query = query.order("order", { ascending: true });
-      } else {
-        query = query.order("id", { ascending: true });
-      }
+      const query = supabase
+        .from("service_details")
+        .select("*")
+        .eq("note_id", id)
+        .order("serviceName", { ascending: true });
 
       const { data: serviceDetails, error } = await query;
-
-      if (error) {
-        console.error("Erro ao buscar detalhes do serviço:", error);
-      } else {
-        console.log("Dados recuperados com sucesso:", serviceDetails);
-      }
-
       if (error) throw error;
       res.json({ data: serviceDetails });
     } catch (err) {
@@ -107,7 +84,6 @@ function initServer(electronApp) {
   app.get("/os/by-month-year/:month/:year", async (req, res) => {
     try {
       const { month, year } = req.params;
-      console.log(`${month}-${year}`);
       const { data, error } = await supabase.rpc("get_monthly_balance", {
         month_year: `${month}-${year}`,
       });
@@ -119,7 +95,7 @@ function initServer(electronApp) {
     }
   });
 
-  // // Buscando todas as os baseadas no id do client
+  // Buscando todas as os baseadas no id do client
   app.get("/os/by-id/:id", async (req, res) => {
     try {
       const { id } = req.params;
@@ -132,7 +108,39 @@ function initServer(electronApp) {
     }
   });
 
-  // ================= Requisições POST ====================
+  // Buscando uma os específica baseado no id da mesma
+  app.get("/os/byOs-id/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { data, error } = await supabase.from("service_notes").select("*").eq("id", id);
+
+      if (error) throw error;
+      res.json({ os: data });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // Buscando uma os específica baseado no id da mesma
+  app.get("/os/by-clientName/:clientName", async (req, res) => {
+    try {
+      const { clientName } = req.params;
+      const { data, error } = await supabase
+        .from("service_notes")
+        .select("*")
+        .eq("client", clientName)
+        .order("id", { ascending: false })
+        .limit(1)
+        .single();
+
+      if (error) throw error;
+      res.json({ os: data });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // ================= Métodos de POST ====================
 
   // Inserindo um cliente no banco de dados
 
@@ -223,7 +231,7 @@ function initServer(electronApp) {
       if (newNoteService) {
         const noteId = newNoteService.id;
 
-        const servicePromise = service.map(async (info, index) => {
+        const servicePromise = service.map(async (info) => {
           const result = await supabase
             .from("service_details")
             .insert([
@@ -234,7 +242,6 @@ function initServer(electronApp) {
                 width: info.width,
                 height: info.height,
                 serviceValue: info.serviceValue,
-                order: index,
               },
             ])
             .select();
