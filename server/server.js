@@ -32,12 +32,13 @@ function initServer(electronApp) {
     }
   });
 
-  // Buscando notas de serviço no banco de dados
-  app.get("/os", async (req, res) => {
+  // Buscando a quantidade de notas de serviço inseridas no banco de dados para cada cliente
+  app.get("/os/amount", async (req, res) => {
     try {
-      const { data, error } = await supabase.from("service_notes").select("*");
+      const { data, error } = await supabase.rpc("counting_os");
+
       if (error) throw error;
-      res.json({ os: data });
+      res.json({ osAmount: data });
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
