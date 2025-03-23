@@ -17,7 +17,6 @@ const url = "http://localhost:3000";
 
 const apiServices = new ApiService(url);
 const clients = await apiServices.get("clients").then((data) => data.clients);
-const os = await apiServices.get("os").then((data) => data.os);
 
 // Animação;
 if (window.SimpleAnime) {
@@ -38,7 +37,7 @@ const searchClient = new SearchClient(
 );
 searchClient.init();
 
-const showClientsIndex = new ShowClientsIndex("[data-wrapper]", clients, os);
+const showClientsIndex = new ShowClientsIndex("[data-wrapper]", clients, url);
 showClientsIndex.init();
 
 const clientPage = new ClientPage(
@@ -68,7 +67,6 @@ const formOs = new FormOs(
   "[data-btnServiceAmount]",
   "[data-serviceItem]",
   clients,
-  os,
   url
 );
 formOs.init();

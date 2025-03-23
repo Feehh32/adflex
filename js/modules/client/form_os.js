@@ -3,13 +3,13 @@ import { fieldValidation, showMessage } from "./form_validations.js";
 import ApiService from "../helpers/api_service.js";
 
 export default class FormOs {
-  constructor(form, btnServAmount, services, clients, os, url) {
+  constructor(form, btnServAmount, services, clients, url) {
     this.form = document.querySelector(form);
     this.btnServAmount = document.querySelector(btnServAmount);
     this.services = document.querySelectorAll(services);
     this.clients = clients;
-    this.os = os;
     this.url = url;
+
     this.hiddenMeasure = true;
     this.serviceValues = [];
     this.currentDate = FormOs.getCurrentDate();
