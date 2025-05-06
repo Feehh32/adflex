@@ -11,6 +11,20 @@
   overflow: hidden;
 }
 
+.delete-os {
+  color: var(--delete-red);
+  background: transparent;
+  border: 3px solid var(--delete-red);
+  height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.delete-os:hover {
+  background: var(--delete-red);
+  color: var(--color-0);
+}
+
 /* estilos para quando nao houver os para ser exibida */
 
 .msgEmptyOs__wrapper {
