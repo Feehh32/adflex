@@ -171,6 +171,7 @@ export default class FormOs {
   async findLastOs(clientName) {
     const apiService = new ApiService(this.url);
     const { os } = await apiService.getParameters("os/by-clientName", clientName);
+    console.log(os);
     if (!os) return null;
     return os;
   }

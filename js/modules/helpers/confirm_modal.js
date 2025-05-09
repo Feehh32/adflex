@@ -1,4 +1,4 @@
-export default function confirmModal(message) {
+export default function confirmModal(message, formContent = null) {
   return new Promise((resolve) => {
     const template = document.querySelector(".confirm_modal");
     const modalContent = document.importNode(template.content, true);
@@ -7,6 +7,14 @@ export default function confirmModal(message) {
     const modalWrapper = modalContent.querySelector(".confirm_modal--wrapper");
 
     modalContent.querySelector("[data-modalMsg]").textContent = message;
+
+    if (formContent) {
+      const formWrapper = modalContent.querySelector("[data-modalForm]");
+      if (formWrapper) {
+        formWrapper.innerHTML = ""; // Limpa conteúdo anterior, se houver
+        formWrapper.appendChild(formContent);
+      }
+    }
 
     document.body.appendChild(modalWrapper);
 

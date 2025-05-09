@@ -30,6 +30,10 @@
   grid-column: 1/-1;
 }
 
+[data-modalForm] {
+  grid-column: 1/-1;
+}
+
 .btn_modal {
   padding: 0.5rem 1rem;
   border-radius: 4px;
