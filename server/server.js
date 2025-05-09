@@ -132,7 +132,7 @@ function initServer(electronApp) {
         .eq("client", clientName)
         .order("id", { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       res.json({ os: data });
@@ -297,6 +297,66 @@ function initServer(electronApp) {
       res.json({ message: "Cliente atualizado com sucesso", client: data[0] });
     } catch (err) {
       res.status(500).json({ err: err.message });
+    }
+  });
+
+  // Editando a data na os
+  app.put("/os/:id", async (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    const { date } = req.body;
+
+    if (!date) {
+      return res.status(400).json({ error: "Campo 'date' é obrigatório." });
+    }
+
+    try {
+      const { data: currentData, error: currentError } = await supabase
+        .from("service_notes")
+        .select("client")
+        .eq("id", id)
+        .maybeSingle();
+
+      if (currentError || !currentData) {
+        return res.status(404).json({ error: "OS não encontrada para atualização." });
+      }
+
+      const clientName = currentData.client;
+
+      const [, month, year] = date.split("-");
+
+      const { data: existingCodes, error: codeError } = await supabase
+        .from("service_notes")
+        .select("code")
+        .ilike("client", clientName)
+        .ilike("date", `%-${month}-${year}-%`)
+        .order("code", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (codeError) throw codeError;
+
+      let nextCode = "001";
+      if (existingCodes?.code) {
+        const lastCodeNum = parseInt(existingCodes.code, 10);
+        nextCode = String(lastCodeNum + 1).padStart(3, "0");
+      }
+
+      const { data: updatedData, error: updateError } = await supabase
+        .from("service_notes")
+        .update({ date, code: nextCode })
+        .eq("id", id)
+        .select()
+        .maybeSingle();
+
+      if (updateError) throw updateError;
+
+      return res.json({
+        message: "Data e código atualizados com sucesso",
+        updatedNote: updatedData,
+      });
+    } catch (err) {
+      console.error("Erro inesperado no catch:", err);
+      return res.status(500).json({ error: "Erro inesperado no servidor." });
     }
   });
 

@@ -3,6 +3,7 @@ import eventEmitter from "../helpers/event_emitter.js";
 import monetaryMask from "../helpers/monetaryMask.js";
 import { handleCustomDate } from "../helpers/formatDate.js";
 import confirmModal from "../helpers/confirm_modal.js";
+import { fieldValidation } from "../client/form_validations.js";
 
 export default class OsPage {
   constructor(titleCode, osWrapper, btn, url) {
@@ -17,6 +18,7 @@ export default class OsPage {
 
     this.deleteOs = this.deleteOs.bind(this);
     this.printServiceOrder = this.printServiceOrder.bind(this);
+    this.editData = this.editData.bind(this);
   }
 
   // Métodos de auxílio
@@ -132,7 +134,7 @@ export default class OsPage {
           <span class="font-os-xxs">Cliente:</span>
           <p class="font-os-s-b">${this.os.client}</p>
       </div>
-      <p class="font-os-s-b ">${customDate}</p>
+      <p class="font-os-s-b" id="os-date">${customDate}</p>
       </div>
       <div class="os__thickness position__os">
       <span class="font-os-xxs color-11">Espessura:</span>
@@ -172,6 +174,36 @@ export default class OsPage {
   printServiceOrder() {
     if (this.os) {
       window.print();
+    }
+  }
+
+  // Editar o campo de data
+  async editData() {
+    const input = document.createElement("input");
+    input.pattern = "^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-[0-9]{4}$";
+    input.placeholder = "dd-mm-aaaa";
+    input.classList.add("input-pattern");
+
+    const wrapper = document.createElement("div");
+    wrapper.appendChild(input);
+
+    const userConfirm = await confirmModal(
+      "Insira a data no campo abaixo e clique em confirmar, lembre se que o formato precisar ser dd-mm-aaaa",
+      wrapper
+    );
+
+    if (this.os) {
+      if (userConfirm) {
+        const newDate = { date: `${input.value}-00-00-00` };
+        const apiServices = new ApiService(this.url, this.os.id);
+        const response = await apiServices.put("os", newDate);
+
+        if (response && response.updatedNote) {
+          this.os = response.updatedNote;
+          this.osCodeOnTitle();
+          this.showOsOnScreen();
+        }
+      }
     }
   }
 
@@ -215,10 +247,12 @@ export default class OsPage {
     this.btn.forEach((btn) => {
       if (btn.innerText === "EXCLUIR") {
         btn.addEventListener("click", this.deleteOs);
-        btn.addEventListener("click", this.deleteOs);
-      } else {
+      }
+      if (btn.innerText === "IMPRIMIR") {
         btn.addEventListener("click", this.printServiceOrder);
-        btn.addEventListener("click", this.printServiceOrder);
+      }
+      if (btn.innerText === "EDITAR DATA") {
+        btn.addEventListener("click", this.editData);
       }
     });
   }
